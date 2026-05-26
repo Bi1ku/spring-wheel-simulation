@@ -2,40 +2,11 @@ from vpython import *
 
 NUM_SPRINGS = 1
 
-
-def bind_num_springs(evt):
-    print(evt.value)
-    NUM_SPRINGS = evt.value
-
-
-def bind_len_springs(evt):
-    if evt.id == "1":
-        pass
-    elif evt.id == "2":
-        pass
-    elif evit.id == "3":
-        pass
-
-
-class Spring:
-    def __init__(self, length, y_pos, spring_constant):
-        self.spring_length = length
-        self.spring_position = vector(-screen.width + 10, y_pos, 0)
-        self.spring_constant = spring_constant
-
-    def draw(self):
-        helix(
-            pos=self.spring_position,
-            axis=vec(1, 0, 0),
-            color=color.cyan,
-            radius=100,
-            length=self.spring_length,
-        )
-
-
 class Simulation:
-    def __init__(self, wheelR, axelR):
-        self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
+    def __init__(self, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
+        self.initSpring = Spring(1.0, 1.0, 10) #temp
+        self.springArr = [self.initSpring]
+        self.wheel = Wheel(wheelR, wheelMass, self.springArr)
         self.axis = Axis(axelR)
 
         self.axis.display()
@@ -58,8 +29,38 @@ class Simulation:
         spring.draw()
 
 
+class Spring:
+    def __init__(self, length, y_pos, spring_constant):
+        self.spring_length = length
+        self.spring_position = vector(-screen.width + 10, y_pos, 0)
+        self.spring_constant = spring_constant
+
+    @staticmethod
+    def bind_num_springs(evt):
+        print(evt.value)
+        NUM_SPRINGS = evt.value
+
+    @staticmethod
+    def bind_len_springs(evt):
+        if evt.id == "1":
+            pass
+        elif evt.id == "2":
+            pass
+        elif evit.id == "3":
+            pass
+
+    def draw(self):
+        helix(
+            pos=self.spring_position,
+            axis=vec(1, 0, 0),
+            color=color.cyan,
+            radius=100,
+            length=self.spring_length,
+        )
+
+
 class Wheel:
-    def __init__(self, radius, mass, springLocations):
+    def __init__(self, radius, mass, springs):
         self.radius = radius
         self.length = 1
         self.springs = springs
@@ -67,11 +68,10 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
-        self.mInertia = (0.5 * self.mass * pow(self.radius, 2))
+        pass 
 
     def applyTorques(self):
         netTorqueMag = 0
-
         for spring in self.springs:
             force = spring.getForce() # method should return vector
             
@@ -106,5 +106,6 @@ class Axis:
 
 
 if __name__ == "__main__":
-    simulation = Simulation(0.5, 0.1)
+    simulation = Simulation()
+    simulation.setup()
     simulation.loop()
