@@ -11,18 +11,23 @@ class Simulation:
         self.wheel.display()
 
 class Wheel: 
-    def __init__(self, radius, mass, springLocations):
+    def __init__(self, radius, mass, springs):
         self.radius = radius 
         self.length = 1
-        self.springLocations = springLocations
+        self.springs = springs
+        self.mass = mass
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
-        self.mInertia = (0.5 * self.mass * math.pow(self.radius, 2))
+        self.mInertia = (0.5 * self.mass * pow(self.radius, 2))
 
-    def applyTorque(self, force, lArm):
-        pass
-    
+    def applyTorques(self):
+        netTorqueMag = 0
+
+        for spring in self.springs:
+            force = spring.getForce() # method should return vector
+            
+
     def changeMass(self, mass):
         self.mass = mass 
         calculateMomentOfInertia()
@@ -33,9 +38,10 @@ class Wheel:
         
     def display(self):
         self.cylinder = cylinder(pos = vec(0, 0, 0), axis = vec(0, 0, 1), radius = self.radius, length = self.length, color = color.red)
-        self.springPoints = points(pos = self.springLocations, color = color.gray)
-
+        self.springPoints = points(pos = self.springs, color = color.green)
+        print("hi")
         #self.cylinder.rotate(axis = vec(0,0,0), angle = pi/3)
+
 class Axis:
     def __init__(self, radius):
         self.radius = radius 
