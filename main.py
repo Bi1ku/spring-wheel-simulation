@@ -1,6 +1,5 @@
 from vpython import *
 
-ROD_X = -screen.width + 10
 NUM_SPRINGS = 1
 
 
@@ -21,7 +20,7 @@ def bind_len_springs(evt):
 class Spring:
     def __init__(self, length, y_pos, spring_constant):
         self.spring_length = length
-        self.spring_position = vector(ROD_X, y_pos, 0)
+        self.spring_position = vector(-screen.width + 10, y_pos, 0)
         self.spring_constant = spring_constant
 
     def draw(self):
@@ -34,22 +33,6 @@ class Spring:
         )
 
 
-def menu():
-    slider(bind=bind_num_springs, max=3, min=1, step=1, value=NUM_SPRINGS)
-
-
-def setup():
-    scene.background = color.white
-    menu()
-    curve(
-        pos=[vec(ROD_X, -screen.height, 0), vector(ROD_X, screen.height, 0)],
-        color=color.black,
-        radius=10,
-    )
-    spring = Spring(100, 6, 10)
-    spring.draw()
-
-
 class Simulation:
     def __init__(self, wheelR, axelR):
         self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
@@ -59,6 +42,19 @@ class Simulation:
 
     def loop(self):
         self.wheel.display()
+
+    def setup():
+        scene.background = color.white
+        curve(
+            pos=[
+                vec(-screen.width + 10, -screen.height, 0),
+                vector(-screen.width + 10, screen.height, 0),
+            ],
+            color=color.black,
+            radius=10,
+        )
+        spring = Spring(100, 6, 10)
+        spring.draw()
 
 
 class Wheel:
