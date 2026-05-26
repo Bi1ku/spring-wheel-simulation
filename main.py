@@ -1,37 +1,48 @@
 from vpython import *
 
 NUM_SPRINGS = 1
+scene = canvas(title="Wheel and Spring Simulation", width=800, height=600)
+ROD_X = -scene.width + 50
 
 
 class Simulation:
     def __init__(self, wheelR, axelR):
+        self.spring = Spring(100, 6, 10)
         self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
         self.axis = Axis(axelR)
+        self.pole = Pole()
 
         self.axis.display()
 
     def loop(self):
         self.wheel.display()
+        self.spring.display()
+        self.pole.display()
 
-    def setup():
+    def setup(self):
         scene.background = color.white
+        # make the scene not interactive (emulate 2D)
+
+
+class Pole:
+    def __init__(self):
+        pass
+
+    def display(self):
         curve(
             pos=[
-                vec(-screen.width + 10, -screen.height, 0),
-                vector(-screen.width + 10, screen.height, 0),
+                vec(ROD_X, scene.height, 0),
+                vec(ROD_X, -scene.height, 0),
             ],
             color=color.black,
             radius=10,
         )
 
-        spring = Spring(100, 6, 10)
-        spring.draw()
-
 
 class Spring:
     def __init__(self, length, y_pos, spring_constant):
         self.spring_length = length
-        self.spring_position = vector(-screen.width + 10, y_pos, 0)
+        self.spring_position = vector(ROD_X + 50, y_pos, 0)
         self.spring_constant = spring_constant
 
     @staticmethod
@@ -48,7 +59,7 @@ class Spring:
         elif evit.id == "3":
             pass
 
-    def draw(self):
+    def display(self):
         helix(
             pos=self.spring_position,
             axis=vec(1, 0, 0),
@@ -88,9 +99,7 @@ class Wheel:
             length=self.length,
             color=color.red,
         )
-        self.springPoints = points(pos=self.springLocations, color=color.gray)
-
-        # self.cylinder.rotate(axis = vec(0,0,0), angle = pi/3)
+        self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
 
 
 class Axis:
