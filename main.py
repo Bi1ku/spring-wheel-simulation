@@ -1,6 +1,8 @@
 from vpython import *
 
 NUM_SPRINGS = 1
+scene = canvas(title="Wheel and Spring Simulation", width=800, height=600)
+ROD_X = -scene.width + 50
 
 
 class Simulation:
@@ -19,6 +21,7 @@ class Simulation:
 
     def setup(self):
         scene.background = color.white
+        # make the scene not interactive (emulate 2D)
 
 
 class Pole:
@@ -28,8 +31,8 @@ class Pole:
     def display(self):
         curve(
             pos=[
-                vec(-390, -390, 0),
-                vec(-390, 390, 0),
+                vec(ROD_X, scene.height, 0),
+                vec(ROD_X, -scene.height, 0),
             ],
             color=color.black,
             radius=10,
@@ -39,7 +42,7 @@ class Pole:
 class Spring:
     def __init__(self, length, y_pos, spring_constant):
         self.spring_length = length
-        self.spring_position = vector(-390, y_pos, 0)
+        self.spring_position = vector(ROD_X + 50, y_pos, 0)
         self.spring_constant = spring_constant
 
     @staticmethod
