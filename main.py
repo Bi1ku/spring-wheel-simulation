@@ -3,36 +3,6 @@ from vpython import *
 NUM_SPRINGS = 1
 
 
-def bind_num_springs(evt):
-    print(evt.value)
-    NUM_SPRINGS = evt.value
-
-
-def bind_len_springs(evt):
-    if evt.id == "1":
-        pass
-    elif evt.id == "2":
-        pass
-    elif evit.id == "3":
-        pass
-
-
-class Spring:
-    def __init__(self, length, y_pos, spring_constant):
-        self.spring_length = length
-        self.spring_position = vector(-screen.width + 10, y_pos, 0)
-        self.spring_constant = spring_constant
-
-    def draw(self):
-        helix(
-            pos=self.spring_position,
-            axis=vec(1, 0, 0),
-            color=color.cyan,
-            radius=100,
-            length=self.spring_length,
-        )
-
-
 class Simulation:
     def __init__(self, wheelR, axelR):
         self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
@@ -58,6 +28,36 @@ class Simulation:
         spring.draw()
 
 
+class Spring:
+    def __init__(self, length, y_pos, spring_constant):
+        self.spring_length = length
+        self.spring_position = vector(-screen.width + 10, y_pos, 0)
+        self.spring_constant = spring_constant
+
+    @staticmethod
+    def bind_num_springs(evt):
+        print(evt.value)
+        NUM_SPRINGS = evt.value
+
+    @staticmethod
+    def bind_len_springs(evt):
+        if evt.id == "1":
+            pass
+        elif evt.id == "2":
+            pass
+        elif evit.id == "3":
+            pass
+
+    def draw(self):
+        helix(
+            pos=self.spring_position,
+            axis=vec(1, 0, 0),
+            color=color.cyan,
+            radius=100,
+            length=self.spring_length,
+        )
+
+
 class Wheel:
     def __init__(self, radius, mass, springLocations):
         self.radius = radius
@@ -66,7 +66,8 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
-        self.mInertia = 0.5 * self.mass * math.pow(self.radius, 2)
+        # self.mInertia = 0.5 * self.mass * math.pow(self.radius, 2)
+        pass
 
     def applyTorque(self, force, lArm):
         pass
@@ -109,4 +110,5 @@ class Axis:
 
 if __name__ == "__main__":
     simulation = Simulation(0.5, 0.1)
+    simulation.setup()
     simulation.loop()
