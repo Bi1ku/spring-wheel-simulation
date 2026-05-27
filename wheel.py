@@ -63,7 +63,7 @@ class Wheel:
         elif evt.id == "d_theta":
             for spoke in self.spokes:
                 spoke.rotate(
-                    angle=displacement,
+                    angle=-displacement,
                     axis=vec(0, 0, 1),
                     origin=vec(0, 0, 0),
                 )

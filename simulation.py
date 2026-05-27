@@ -9,6 +9,7 @@ class Simulation:
     def __init__(self):
         self.run = False
         self.previous_theta = 0
+        self.small_angle_approx = True
         self.pole = Pole()
         self.spring = Spring(length = (WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)), radius = 30, spr_wheel_dist = 120, spr_const = 2)  # use single spring for now
         self.spring_arr = [self.spring]
@@ -66,6 +67,19 @@ class Simulation:
             self.spring.change_config(evt, self.wheel.wheel.radius)
             self.wheel.change_config(evt, new_value)
 
+        ### SMALL ANGLE APPROX CHECKBOX
+        def angle_aprox_bind(evt):
+            self.small_angle_approx = evt.checked
+            #print(self.small_angle_approx)
+
+        SCENE.append_to_caption("Small Angle Approximation?: ")
+        checkbox(
+            bind = angle_aprox_bind, 
+            checked = True
+        )
+    
+        SCENE.append_to_caption("\n\n")
+
         SCENE.append_to_caption("Angular Displacement: ")
         slider(
             bind=d_theta_bind,
@@ -98,7 +112,7 @@ class Simulation:
         ### WHEEL RADIUS SLIDER ###
         def radius_bind(evt):
             radius_text.text = str(evt.value) + " m\n"
-            self.wheel.change_config(evt, 0)
+            self.wheel.change_config(evt, 0) #cleanup in future
             self.spring.change_config(evt, self.wheel.wheel.radius)
 
         SCENE.append_to_caption("Wheel Radius: ")
