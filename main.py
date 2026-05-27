@@ -5,7 +5,7 @@ scene = canvas(title="Wheel and Spring Simulation", width=800, height=600)
 ROD_X = -scene.width + 50
 
 class Simulation:
-   def __init__(self, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
+    def __init__(self, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
         self.initSpring = Spring(1.0, 1.0, 10) #temp
         self.springArr = [self.initSpring]
         self.wheel = Wheel(wheelR, wheelMass, self.springArr)
@@ -16,7 +16,8 @@ class Simulation:
 
     def loop(self):
         self.wheel.display()
-        self.spring.display()
+        for spring in self.springArr:
+            spring.display()
         self.pole.display()
 
     def setup(self):
@@ -62,7 +63,7 @@ class Spring:
 
     def display(self):
         helix(
-            pos=self.spring_position,
+            pos=self.current_position,
             axis=vec(1, 0, 0),
             color=color.cyan,
             radius=100,
@@ -70,7 +71,7 @@ class Spring:
         )
     
     def getForce(self): 
-        retun self.spring_constant * (self.current_position - self.equi_position)
+        return self.spring_constant * (self.current_position - self.equi_position)
 
 class Wheel:
     def __init__(self, radius, mass, springs):
@@ -105,7 +106,7 @@ class Wheel:
             length=self.length,
             color=color.red,
         )
-        self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
+        #self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
 
 class Axis:
     def __init__(self, radius):
