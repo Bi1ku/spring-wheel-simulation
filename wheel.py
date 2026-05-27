@@ -2,18 +2,15 @@ from vpython import *
 
 
 class Wheel:
-    def __init__(self, radius, mass, springLocations):
+    def __init__(self, radius, mass, springs):
         self.radius = radius
         self.length = 1
-        self.springLocations = springLocations
+        self.springs = springs
+        self.mass = mass
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
-        # self.mInertia = 0.5 * self.mass * math.pow(self.radius, 2)
-        pass
-
-    def applyTorque(self, force, lArm):
-        pass
+        self.momentOfInertia = 0.5 * self.mass * pow(self.radius, 2)
 
     def changeMass(self, mass):
         self.mass = mass
@@ -24,14 +21,15 @@ class Wheel:
         calculateMomentOfInertia()
 
     def display(self):
-        self.cylinder = cylinder(
+        cylinder(
             pos=vec(0, 0, 0),
             axis=vec(0, 0, 1),
             radius=self.radius,
             length=self.length,
             color=color.red,
         )
-        self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
+        # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
 
     def update(self):
         pass
+        # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
