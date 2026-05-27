@@ -3,13 +3,12 @@ from spring import Spring
 from wheel import Wheel
 from pole import Pole
 from constants import SCENE, WHEEL_CENTER_X, WHEEL_CENTER_Y, SPRING_LEFT_X_OFFSET, ROD_X
-import math
 
 
 class Simulation:
     def __init__(self):
         self.run = False
-
+        self.previous_theta = 0
         self.pole = Pole()
         self.spring = Spring(length = (WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)), radius = 30, spr_wheel_dist = 120, spr_const = 2)  # use single spring for now
         self.spring_arr = [self.spring]
@@ -57,17 +56,23 @@ class Simulation:
         SCENE.append_to_caption("\n\n")
 
         ### ANGULAR DISPLACEMENT SLIDER ###
+
         def d_theta_bind(evt):
             d_theta_text.text = str(evt.value) + " rad\n"
+            
+            new_value = evt.value - self.previous_theta
+            self.previous_theta = evt.value
+
             self.spring.change_config(evt, self.wheel.wheel.radius)
-            self.wheel.change_config(evt)
+            self.wheel.change_config(evt, new_value)
 
         SCENE.append_to_caption("Angular Displacement: ")
         slider(
             bind=d_theta_bind,
-            min=0,
-            max=math.radians(30),
-            step=math.radians(0.1),
+            min=radians(-45),
+            value = 0,
+            max=radians(45),
+            step=radians(5),
             length=200,
             id="d_theta",
         )
@@ -76,7 +81,7 @@ class Simulation:
         ### MASS SLIDER ###
         def mass_bind(evt):
             mass_text.text = str(evt.value) + " kg\n"
-            self.wheel.change_config(evt)
+            self.wheel.change_config(evt, 0) #cleanup in future 
 
         SCENE.append_to_caption("Wheel Mass: ")
         slider(
@@ -93,7 +98,7 @@ class Simulation:
         ### WHEEL RADIUS SLIDER ###
         def radius_bind(evt):
             radius_text.text = str(evt.value) + " m\n"
-            self.wheel.change_config(evt)
+            self.wheel.change_config(evt, 0)
             self.spring.change_config(evt, self.wheel.wheel.radius)
 
         SCENE.append_to_caption("Wheel Radius: ")
@@ -101,7 +106,7 @@ class Simulation:
             bind=radius_bind,
             min=50,
             value=self.wheel.wheel.radius,
-            max=150,
+            max=300,
             step=1,
             length=200,
             id="radius",

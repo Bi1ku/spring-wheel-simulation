@@ -1,7 +1,5 @@
 from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
-import math
-
 
 class Wheel:
     def __init__(self, radius, mass, springs):
@@ -51,7 +49,7 @@ class Wheel:
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
-    def change_config(self, evt):
+    def change_config(self, evt, displacement):
         if evt.id == "mass":
             self.mass = evt.value
 
@@ -65,9 +63,7 @@ class Wheel:
         elif evt.id == "d_theta":
             for spoke in self.spokes:
                 spoke.rotate(
-                    angle=radians(
-                        3
-                    ),  # go reverse if decreasing d_theta, but figure out later
+                    angle=displacement,
                     axis=vec(0, 0, 1),
                     origin=vec(0, 0, 0),
                 )
