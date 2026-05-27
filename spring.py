@@ -8,6 +8,7 @@ class Spring:
         self.length = length
         self.pos = vector(ROD_X + 12, y_pos, 0)
         self.constant = spring_constant
+        self.spring = helix()
 
     @staticmethod
     def bind_num_springs(evt):
@@ -30,7 +31,7 @@ class Spring:
         self.springConstant = constant
 
     def display(self):
-        helix(
+        self.spring = helix(
             pos=self.pos,
             axis=vec(1, 0, 0),
             color=color.cyan,
@@ -38,5 +39,5 @@ class Spring:
             length=self.length,
         )
 
-    def update(self):
-        pass
+    def update(self, d_theta, wheel_radius):
+        self.spring.length = self.length + d_theta * wheel_radius
