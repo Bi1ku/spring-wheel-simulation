@@ -26,16 +26,10 @@ class Simulation:
     def loop(self):
         self.wheel.update()
         for spring in self.spring_arr:
-            spring.update(self.d_theta, self.wheel.radius)
-        self.pole.update()
+            spring.update(self.d_theta, self.wheel.wheel.radius)
 
     def setup(self):
         SCENE.background = color.white
-
-        self.wheel.display()
-        self.pole.display()
-        for spring in self.spring_arr:
-            spring.display()
         self.menu()
 
         SCENE.center = vec(0, 0, 0)

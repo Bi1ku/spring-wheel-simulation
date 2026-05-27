@@ -5,9 +5,6 @@ from vpython import *
 
 class Pole:
     def __init__(self):
-        pass
-
-    def display(self):
         curve(
             pos=[
                 vec(ROD_X, SCENE.height, 0),
@@ -16,6 +13,3 @@ class Pole:
             color=color.black,
             radius=10,
         )
-
-    def update(self):
-        pass
