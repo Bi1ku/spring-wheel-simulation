@@ -9,6 +9,7 @@ import math
 class Simulation:
     def __init__(self):
         self.run = False
+        self.reset = False
 
         self.d_theta = 0
         self.mass = 15
@@ -51,11 +52,20 @@ class Simulation:
     def menu(self):
         SCENE.append_to_caption("\n\n")
 
-        ### RUN SIM BUTTON ###
+        ### RESET SIM BUTTON ###
         def bind_run(_):
             self.run = True
 
         button(bind=bind_run, text="Run Simulation")
+
+        SCENE.append_to_caption("   ")
+
+        ### RUN SIM BUTTON ###
+        def bind_reset(_):
+            self.reset = True
+
+        button(bind=bind_reset, text="Reset Simulation")
+
         SCENE.append_to_caption("\n\n")
 
         ### ANGULAR DISPLACEMENT SLIDER ###
