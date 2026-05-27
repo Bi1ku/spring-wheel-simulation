@@ -5,15 +5,16 @@ from constants import SPRING_LEFT_X, SPRING_STRETCHED_START_LENGTH
 class Spring:
     def __init__(self, length, radius, spr_wheel_dist, spr_const):
         self.spr_const = spr_const
-        self.length = length
+        self.length = length #natural length
         self.lever_arm = vector(0, spr_wheel_dist, 0)
+        self.axis = vec(1,0,0)
         # Spring length is the strecthed length, not the natural length
         self.spring = helix(
             pos=vec(SPRING_LEFT_X, spr_wheel_dist, 0),
-            axis=vec(1, 0, 0),
+            axis=self.axis,
             color=color.cyan,
             radius=radius,
-            length=(SPRING_STRETCHED_START_LENGTH),
+            length=(SPRING_STRETCHED_START_LENGTH), 
             coils=length / radius,
         )
 
@@ -30,7 +31,11 @@ class Spring:
         self.lever_arm = rotate(self.lever_arm, angle = theta, axis = vector(0, 0, 1))
 
     def get_torque(self):
-        return cross
+        mag_force = -1 * self.spr_const * (self.spring.length - self.length)
+        force = mag_force * axis 
+        torque = cross(force, lever_arm)
+        
+        return torque #vector 
 
     def update(self):
         # where actual simulation goes
