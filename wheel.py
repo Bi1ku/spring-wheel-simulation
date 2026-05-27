@@ -1,6 +1,5 @@
 from vpython import *
-import math
-
+from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 
 class Wheel:
     def __init__(self, radius, mass, springs):
@@ -8,8 +7,8 @@ class Wheel:
         self.mass = mass
 
         self.wheel = cylinder(
-            pos=vec(0, 0, 0),
-            axis=vec(0, 0, -1),
+            pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),
+            axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),
             radius=radius,
             length=1,
             color=color.red,
@@ -50,7 +49,7 @@ class Wheel:
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
-    def change_config(self, evt):
+    def change_config(self, evt, theta = 0):
         if evt.id == "mass":
             self.mass = evt.value
 
@@ -64,14 +63,33 @@ class Wheel:
         elif evt.id == "d_theta":
             for spoke in self.spokes:
                 spoke.rotate(
-                    angle=math.radians(
-                        3
-                    ),  # go reverse if decreasing d_theta, but figure out later
+                    angle=-theta,
                     axis=vec(0, 0, 1),
                     origin=vec(0, 0, 0),
                 )
 
         self.calculateMomentOfInertia()
+
+    def calculate_angular_frequency(self):
+        '''
+         let me cook here
+         t = torque 
+         a = angular acceleration
+         l = lever arm for spring
+
+         t = I * a 
+         -k(l * theta) x l = 0.5 * m * r^2 * a 
+         (-k*l^2)/(0.5 * m*r^2) * theta = a 
+         so we only need to get the sum of all -k * l^2 (still need to consider them as vectors) to calculate angular frequency
+        '''
+
+        total_components = 0
+        for spring in springs:
+            total_components += spring.get_angular_frequency_component().z
+
+        w_squared = total_components/self.momentOfInertia
+        
+        return sqrt(w_squared)
 
     def update(self):
         # where the actual simulation goes

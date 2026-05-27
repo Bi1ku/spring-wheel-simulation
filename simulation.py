@@ -2,21 +2,22 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE
-import math
+from constants import SCENE, SPRING_STRETCHED_START_LENGTH
 
 
 class Simulation:
     def __init__(self):
         self.run = False
-
-        self.spring = Spring(300, 30, 0, 2)  # use single spring for now
+        self.previous_theta = 0
+        self.small_angle_approx = True
+        self.pole = Pole()
+        self.spring = Spring(length =  3 * (SPRING_STRETCHED_START_LENGTH) / 4, radius = 30, spr_wheel_dist = 120, spr_const = 2)  # use single spring for now
         self.spring_arr = [self.spring]
 
-        self.wheel = Wheel(100, 15, self.spring_arr)
-        self.pole = Pole()
+        self.wheel = Wheel(radius = 200, mass = 15, springs = self.spring_arr)
 
     def loop(self):
+        #print(self.previous_theta)
         self.wheel.update()
         for spring in self.spring_arr:
             spring.update()
@@ -56,18 +57,37 @@ class Simulation:
 
         SCENE.append_to_caption("\n\n")
 
-        ### ANGULAR DISPLACEMENT SLIDER ###
+        ### SMALL ANGLE APPROX CHECKBOX
+        def angle_aprox_bind(evt):
+            self.small_angle_approx = evt.checked
+            #print(self.small_angle_approx)
+
+        SCENE.append_to_caption("Small Angle Approximation?: ")
+        checkbox(
+            bind = angle_aprox_bind, 
+            checked = True
+        )
+    
+        SCENE.append_to_caption("\n\n")
+          ### ANGULAR DISPLACEMENT SLIDER ###
+
         def d_theta_bind(evt):
             d_theta_text.text = str(evt.value) + " rad\n"
-            self.spring.change_config(evt, self.wheel.wheel.radius)
-            self.wheel.change_config(evt)
+            
+            new_value = evt.value - self.previous_theta
+            self.previous_theta = evt.value
+
+            self.spring.change_config(evt = evt, wheel_radius = self.wheel.wheel.radius, theta = new_value)
+            self.wheel.change_config(evt = evt, theta = new_value)
+
 
         SCENE.append_to_caption("Angular Displacement: ")
         slider(
             bind=d_theta_bind,
-            min=0,
-            max=math.radians(30),
-            step=math.radians(0.1),
+            min=radians(-30),
+            value = 0,
+            max=radians(30),
+            step=radians(5),
             length=200,
             id="d_theta",
         )
@@ -76,7 +96,7 @@ class Simulation:
         ### MASS SLIDER ###
         def mass_bind(evt):
             mass_text.text = str(evt.value) + " kg\n"
-            self.wheel.change_config(evt)
+            self.wheel.change_config(evt = evt) #cleanup in future 
 
         SCENE.append_to_caption("Wheel Mass: ")
         slider(
@@ -93,15 +113,15 @@ class Simulation:
         ### WHEEL RADIUS SLIDER ###
         def radius_bind(evt):
             radius_text.text = str(evt.value) + " m\n"
-            self.wheel.change_config(evt)
-            self.spring.change_config(evt, self.wheel.wheel.radius)
+            self.wheel.change_config(evt = evt) #cleanup in future
+            self.spring.change_config(evt = evt, wheel_radius = self.wheel.wheel.radius)
 
         SCENE.append_to_caption("Wheel Radius: ")
         slider(
             bind=radius_bind,
             min=50,
             value=self.wheel.wheel.radius,
-            max=150,
+            max=300,
             step=1,
             length=200,
             id="radius",
@@ -111,7 +131,7 @@ class Simulation:
         ### SPRING CONSTANT SLIDER ###
         def spr_const_bind(evt):
             spr_const_text.text = str(evt.value) + " N/m\n"
-            self.spring.change_config(evt, self.wheel.wheel.radius)
+            self.spring.change_config(evt = evt, wheel_radius = self.wheel.wheel.radius)
 
         SCENE.append_to_caption("Spring Constant: ")
         slider(
@@ -128,7 +148,7 @@ class Simulation:
         ### SPRING-WHEEL DISTANCE SLIDER ###
         def spr_wheel_dist_bind(evt):
             spr_wheel_dist_text.text = str(evt.value) + " m\n"
-            self.spring.change_config(evt, self.wheel.wheel.radius)
+            self.spring.change_config(evt = evt, wheel_radius = self.wheel.wheel.radius)
 
         SCENE.append_to_caption("Spring-Wheel Distance: ")
         slider(
