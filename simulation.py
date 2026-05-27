@@ -20,12 +20,10 @@ class Simulation:
             initSpringLength, 50, initSpringY, initSpringConstant
         )  # temp
         self.springArr = [self.initSpring]
+
         self.wheel = Wheel(wheelR, wheelMass, self.springArr)
         self.axis = Axis(axelR)
         self.pole = Pole()
-
-        self.axis.display()
-        self.pole.display()
 
     def loop(self):
         self.wheel.update()
@@ -33,14 +31,25 @@ class Simulation:
             spring.update()
         self.pole.update()
 
+    def menu(self):
+        def d_theta_bind(evt):
+            print(evt.value)
+            d_theta_text.text = "Ang Displ: " + str(evt.value) + " rad\n"
+
+        SCENE.append_to_caption("Angular Displacement: ")
+        d_theta = slider(bind=d_theta_bind, min=0, max=100, value=0, step=1, length=200)
+        d_theta_text = wtext(text=str(d_theta.value) + " rad\n")
+
     def setup(self):
         SCENE.background = color.white
 
         self.wheel.display()
         self.pole.display()
         self.axis.display()
+        self.pole.display()
         for spring in self.springArr:
             spring.display()
+        self.menu()
 
         SCENE.center = vec(0, 0, 0)
         SCENE.forward = vec(0.407, -0.00999, -0.913)
