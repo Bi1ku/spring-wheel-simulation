@@ -14,19 +14,20 @@ class Wheel:
 
     def changeMass(self, mass):
         self.mass = mass
-        calculateMomentOfInertia()
+        self.calculateMomentOfInertia()
 
     def changeRadius(self, radius):
         self.radius = radius
-        calculateMomentOfInertia()
+        self.calculateMomentOfInertia()
 
     def display(self):
         cylinder(
             pos=vec(0, 0, 0),
-            axis=vec(0, 0, 1),
+            axis=vec(0, 0, -1),
             radius=self.radius,
             length=self.length,
             color=color.red,
+            opacity=0.99,
         )
         # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
 

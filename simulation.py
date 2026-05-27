@@ -39,7 +39,7 @@ class Simulation:
         self.menu()
 
         SCENE.center = vec(0, 0, 0)
-        SCENE.forward = vec(0.407, -0.00999, -0.913)
+        SCENE.forward = vec(0, 0, -1)
         SCENE.up = vec(0, 1, 0)
         SCENE.range = 660
 
