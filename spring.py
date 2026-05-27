@@ -31,6 +31,7 @@ class Spring:
         self.lever_arm = rotate(self.lever_arm, angle = theta, axis = vector(0, 0, 1))
 
     def get_angular_frequency_component(self):
+        
         pass
 
         

@@ -74,15 +74,15 @@ class Wheel:
         /* 
          let me cook here
          t = torque 
-         I = moment of inertia 
          a = angular acceleration
+         l = lever arm for spring
 
          t = I * a 
-         -k(r * theta) x l = 0.5 * m * r^2 * a 
-         (-k*l)/(0.5 * m*r) * theta = a 
-         so we only need to get the sum of all -k * l (still needs to be vector form) to calculate angular frequency
+         -k(l * theta) x l = 0.5 * m * r^2 * a 
+         (-k*l^2)/(0.5 * m*r^2) * theta = a 
+         so we only need to get the sum of all -k * l^2 (still need to consider them as vectors) to calculate angular frequency
         */
-        
+        pass
 
     def update(self):
         # where the actual simulation goes
