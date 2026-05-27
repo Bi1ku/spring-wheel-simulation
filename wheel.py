@@ -71,7 +71,7 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def calculate_angular_frequency(self):
-        /* 
+        '''
          let me cook here
          t = torque 
          a = angular acceleration
@@ -81,8 +81,15 @@ class Wheel:
          -k(l * theta) x l = 0.5 * m * r^2 * a 
          (-k*l^2)/(0.5 * m*r^2) * theta = a 
          so we only need to get the sum of all -k * l^2 (still need to consider them as vectors) to calculate angular frequency
-        */
-        pass
+        '''
+
+        total_components = 0
+        for spring in springs:
+            total_components += spring.get_angular_frequency_component().z
+
+        w_squared = total_components/self.momentOfInertia
+        
+        return sqrt(w_squared)
 
     def update(self):
         # where the actual simulation goes

@@ -7,7 +7,7 @@ class Spring:
         self.spr_const = spr_const
         self.length = length #natural length
         self.lever_arm = vector(0, spr_wheel_dist, 0)
-        self.axis = vec(1,0,0)
+        self.axis = vec(1,0,0) # POSITIVE X
         # Spring length is the strecthed length, not the natural length
         self.spring = helix(
             pos=vec(SPRING_LEFT_X, spr_wheel_dist, 0),
@@ -31,10 +31,19 @@ class Spring:
         self.lever_arm = rotate(self.lever_arm, angle = theta, axis = vector(0, 0, 1))
 
     def get_angular_frequency_component(self):
-        
-        pass
 
-        
+        if self.spring.length < self.length:
+            return cross(
+                (k * spr_wheel_dist) * self.axis, 
+                self.lever_arm 
+            )
+        elif self.spring.length > self.length:
+            return cross(
+                (-k * spr_wheel_dist) * self.axis, 
+                self.lever_arm 
+            )
+        else:
+            return 0
 
     def update(self):
         # where actual simulation goes
