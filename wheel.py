@@ -70,6 +70,20 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
+    def calculate_angular_frequency(self):
+        /* 
+         let me cook here
+         t = torque 
+         I = moment of inertia 
+         a = angular acceleration
+
+         t = I * a 
+         -k(r * theta) x l = 0.5 * m * r^2 * a 
+         (-k*l)/(0.5 * m*r) * theta = a 
+         so we only need to get the sum of all -k * l (still needs to be vector form) to calculate angular frequency
+        */
+        
+
     def update(self):
         # where the actual simulation goes
         # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))

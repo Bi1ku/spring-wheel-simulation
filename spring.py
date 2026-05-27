@@ -30,12 +30,10 @@ class Spring:
         self.spring.length += theta * wheel_radius
         self.lever_arm = rotate(self.lever_arm, angle = theta, axis = vector(0, 0, 1))
 
-    def get_torque(self):
-        mag_force = -1 * self.spr_const * (self.spring.length - self.length)
-        force = mag_force * axis 
-        torque = cross(force, lever_arm)
+    def get_angular_frequency_component(self):
+        pass
+
         
-        return torque #vector 
 
     def update(self):
         # where actual simulation goes
