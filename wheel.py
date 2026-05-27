@@ -49,7 +49,7 @@ class Wheel:
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
-    def change_config(self, evt, displacement):
+    def change_config(self, evt, theta = 0):
         if evt.id == "mass":
             self.mass = evt.value
 
@@ -63,7 +63,7 @@ class Wheel:
         elif evt.id == "d_theta":
             for spoke in self.spokes:
                 spoke.rotate(
-                    angle=-displacement,
+                    angle=-theta,
                     axis=vec(0, 0, 1),
                     origin=vec(0, 0, 0),
                 )
