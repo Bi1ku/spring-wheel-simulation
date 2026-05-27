@@ -2,7 +2,7 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE
+from constants import SCENE, WHEEL_CENTER_X, WHEEL_CENTER_Y, SPRING_LEFT_X_OFFSET, ROD_X
 import math
 
 
@@ -10,11 +10,11 @@ class Simulation:
     def __init__(self):
         self.run = False
 
-        self.spring = Spring(300, 30, 0, 2)  # use single spring for now
+        self.pole = Pole()
+        self.spring = Spring(length = (WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)), radius = 30, spr_wheel_dist = 120, spr_const = 2)  # use single spring for now
         self.spring_arr = [self.spring]
 
-        self.wheel = Wheel(100, 15, self.spring_arr)
-        self.pole = Pole()
+        self.wheel = Wheel(radius = 200, mass = 15, springs = self.spring_arr)
 
     def loop(self):
         self.wheel.update()

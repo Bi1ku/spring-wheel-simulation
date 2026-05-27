@@ -1,5 +1,5 @@
 from vpython import *
-from constants import ROD_X
+from constants import ROD_X, SPRING_LEFT_X_OFFSET
 
 
 class Spring:
@@ -9,7 +9,7 @@ class Spring:
 
         # Spring length is the strecthed length, not the natural length
         self.spring = helix(
-            pos=vec(ROD_X + 12, spr_wheel_dist, 0),
+            pos=vec(ROD_X + SPRING_LEFT_X_OFFSET, spr_wheel_dist, 0),
             axis=vec(1, 0, 0),
             color=color.cyan,
             radius=radius,
@@ -21,7 +21,7 @@ class Spring:
         if evt.id == "spr_const":
             self.spr_const = evt.value
         elif evt.id == "spr_wheel_dist":
-            self.spring.pos = vec(ROD_X + 12, evt.value, 0)
+            self.spring.pos = vec(ROD_X + SPRING_LEFT_X_OFFSET, evt.value, 0)
         elif evt.id == "d_theta":
             self.spring.length = self.length + evt.value * wheel_radius
 

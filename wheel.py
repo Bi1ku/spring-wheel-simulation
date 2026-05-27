@@ -1,4 +1,5 @@
 from vpython import *
+from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 import math
 
 
@@ -8,8 +9,8 @@ class Wheel:
         self.mass = mass
 
         self.wheel = cylinder(
-            pos=vec(0, 0, 0),
-            axis=vec(0, 0, -1),
+            pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),
+            axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),
             radius=radius,
             length=1,
             color=color.red,
@@ -64,7 +65,7 @@ class Wheel:
         elif evt.id == "d_theta":
             for spoke in self.spokes:
                 spoke.rotate(
-                    angle=math.radians(
+                    angle=radians(
                         3
                     ),  # go reverse if decreasing d_theta, but figure out later
                     axis=vec(0, 0, 1),
