@@ -4,5 +4,6 @@ if __name__ == "__main__":
     simulation = Simulation()
     simulation.setup()
 
-    while 1:
-        simulation.loop()
+    while True:
+        if simulation.run:
+            simulation.loop()
