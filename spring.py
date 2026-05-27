@@ -10,20 +10,6 @@ class Spring:
         self.constant = spring_constant
         self.spring = helix()
 
-    @staticmethod
-    def bind_num_springs(evt):
-        print(evt.value)
-        NUM_SPRINGS = evt.value
-
-    @staticmethod
-    def bind_len_springs(evt):
-        if evt.id == "1":
-            pass
-        elif evt.id == "2":
-            pass
-        elif evt.id == "3":
-            pass
-
     def changePosition(self, position):  # not for slider use, must be vector
         self.currentPosition = position
 
