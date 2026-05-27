@@ -37,6 +37,7 @@ class Spring:
             color=color.cyan,
             radius=self.radius,
             length=self.length,
+            coils=self.length / self.radius,
         )
 
     def update(self, d_theta, wheel_radius):
