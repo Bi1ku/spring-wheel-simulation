@@ -1,7 +1,6 @@
 from vpython import *
 from spring import Spring
 from wheel import Wheel
-from axis import Axis
 from pole import Pole
 from constants import SCENE
 import math
@@ -15,7 +14,6 @@ class Simulation:
         initSpringConstant=10,
         wheelMass=1.0,
         wheelR=100,
-        axelR=1.0,
     ):
         self.initSpring = Spring(
             initSpringLength, 50, initSpringY, initSpringConstant
@@ -23,7 +21,6 @@ class Simulation:
         self.springArr = [self.initSpring]
 
         self.wheel = Wheel(wheelR, wheelMass, self.springArr)
-        self.axis = Axis(axelR)
         self.pole = Pole()
         self.d_theta = 0
 
@@ -53,8 +50,6 @@ class Simulation:
         SCENE.background = color.white
 
         self.wheel.display()
-        self.pole.display()
-        self.axis.display()
         self.pole.display()
         for spring in self.springArr:
             spring.display()
