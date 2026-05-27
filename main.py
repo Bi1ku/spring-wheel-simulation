@@ -1,24 +1,24 @@
 from vpython import *
 
 NUM_SPRINGS = 1
-scene = canvas(title="Wheel and Spring Simulation", width=800, height=600)
+scene = canvas(title="wheel and spring", width=800, height=600)
 ROD_X = -scene.width + 50
 
 class Simulation:
-    def __init__(self, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
-        self.initSpring = Spring(1.0, 1.0, 10) #temp
+    def __init__(self, initSpringLength = 1.0, initSpringY = 0.8, initSpringConstant = 10, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
+        self.initSpring = Spring(initSpringLength, initSpringY, initSpringConstant) #temp
         self.springArr = [self.initSpring]
         self.wheel = Wheel(wheelR, wheelMass, self.springArr)
         self.axis = Axis(axelR)
         self.pole = Pole()
 
         self.axis.display()
-
+        self.pole.display()
+    
     def loop(self):
         self.wheel.display()
         for spring in self.springArr:
             spring.display()
-        self.pole.display()
 
     def setup(self):
         scene.background = color.white
@@ -39,13 +39,13 @@ class Pole:
             radius=10,
         )
 
-
 class Spring:
-    def __init__(self, length, y_pos, spring_constant):
-        self.spring_length = length
-        self.equi_position = vector(ROD_X + 50, y_pos, 0)
-        self.current_position = self.equi_position
-        self.spring_constant = spring_constant
+    def __init__(self, length, yPos, springConstant):
+        self.springLength = length
+        self.leverArm = vector(0, yPos, 0)
+        self.equiPosition = vector(ROD_X + 50, yPos, 0)
+        self.currentPosition = self.equiPosition
+        self.springConstant = springConstant
         
     @staticmethod
     def bind_num_springs(evt):
@@ -61,18 +61,21 @@ class Spring:
         elif evit.id == "3":
             pass
 
+    def changePosition(self, position): #not for slider use, must be vector
+        self.currentPosition = position
+
+    def changeConstant(self, constant):
+        self.springConstant = constant
+
     def display(self):
         helix(
-            pos=self.current_position,
+            pos=self.currentPosition,
             axis=vec(1, 0, 0),
             color=color.cyan,
             radius=100,
-            length=self.spring_length,
+            length=self.springLength,
         )
     
-    def getForce(self): 
-        return self.spring_constant * (self.current_position - self.equi_position)
-
 class Wheel:
     def __init__(self, radius, mass, springs):
         self.radius = radius
@@ -82,13 +85,7 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
-        pass 
-
-    def applyTorques(self):
-        netTorqueMag = 0
-        for spring in self.springs:
-            force = spring.getForce() # method should return vector
-            
+        self.momentOfInertia = 0.5 * self.mass * pow(self.radius, 2)
 
     def changeMass(self, mass):
         self.mass = mass
@@ -99,7 +96,7 @@ class Wheel:
         calculateMomentOfInertia()
         
     def display(self):
-        self.cylinder = cylinder(
+        cylinder(
             pos=vec(0, 0, 0),
             axis=vec(0, 0, 1),
             radius=self.radius,
