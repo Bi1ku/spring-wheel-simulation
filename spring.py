@@ -3,11 +3,13 @@ from constants import ROD_X, NUM_SPRINGS
 
 
 class Spring:
-    def __init__(self, length, y_pos, spring_constant):
-        self.spring_length = length
-        self.spring_position = vector(ROD_X + 50, y_pos, 0)
-        self.spring_constant = spring_constant
-
+    def __init__(self, length, yPos, springConstant):
+        self.springLength = length
+        self.leverArm = vector(0, yPos, 0)
+        self.equiPosition = vector(ROD_X + 50, yPos, 0)
+        self.currentPosition = self.equiPosition
+        self.springConstant = springConstant
+        
     @staticmethod
     def bind_num_springs(evt):
         print(evt.value)
@@ -19,14 +21,20 @@ class Spring:
             pass
         elif evt.id == "2":
             pass
-        elif evt.id == "3":
+        elif evit.id == "3":
             pass
+
+    def changePosition(self, position): #not for slider use, must be vector
+        self.currentPosition = position
+
+    def changeConstant(self, constant):
+        self.springConstant = constant
 
     def display(self):
         helix(
-            pos=self.spring_position,
+            pos=self.currentPosition,
             axis=vec(1, 0, 0),
             color=color.cyan,
             radius=100,
-            length=self.spring_length,
+            length=self.springLength,
         )

@@ -7,19 +7,22 @@ from constants import SCENE
 
 
 class Simulation:
-    def __init__(self, wheelR, axelR):
-        self.spring = Spring(100, 6, 10)
-        self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
+    def __init__(self, initSpringLength = 1.0, initSpringY = 0.8, initSpringConstant = 10, wheelMass = 1.0, wheelR = 0.5, axelR = 1.0):
+        self.initSpring = Spring(initSpringLength, initSpringY, initSpringConstant) #temp
+        self.springArr = [self.initSpring]
+        self.wheel = Wheel(wheelR, wheelMass, self.springArr)
         self.axis = Axis(axelR)
         self.pole = Pole()
 
         self.axis.display()
-
+        self.pole.display()
+    
     def loop(self):
         self.wheel.display()
-        self.spring.display()
-        self.pole.display()
+        for spring in self.springArr:
+            spring.display()
 
     def setup(self):
-        SCENE.background = color.white
+        scene.background = color.white
         # make the scene not interactive (emulate 2D)
+
