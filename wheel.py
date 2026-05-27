@@ -32,3 +32,6 @@ class Wheel:
             color=color.red,
         )
         self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
+
+    def update(self):
+        pass

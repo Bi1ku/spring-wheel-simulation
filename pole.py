@@ -16,3 +16,6 @@ class Pole:
             color=color.black,
             radius=10,
         )
+
+    def update(self):
+        pass

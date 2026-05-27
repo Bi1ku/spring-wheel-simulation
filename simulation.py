@@ -8,18 +8,31 @@ from constants import SCENE
 
 class Simulation:
     def __init__(self, wheelR, axelR):
-        self.spring = Spring(100, 6, 10)
+        self.spring = Spring(300, 50, 10, 10)
         self.wheel = Wheel(wheelR, 1.0, [vec(0, 0.25, 0), vec(0, -0.25, 0)])
         self.axis = Axis(axelR)
         self.pole = Pole()
 
-        self.axis.display()
-
     def loop(self):
-        self.wheel.display()
-        self.spring.display()
-        self.pole.display()
+        self.wheel.update()
+        self.spring.update()
+        self.pole.update()
 
     def setup(self):
         SCENE.background = color.white
-        # make the scene not interactive (emulate 2D)
+
+        self.wheel.display()
+        self.spring.display()
+        self.pole.display()
+        self.axis.display()
+
+        SCENE.center = vec(0, 0, 0)
+        SCENE.forward = vec(0.407, -0.00999, -0.913)
+        SCENE.up = vec(0, 1, 0)
+        SCENE.range = 660
+
+        SCENE.userzoom = False
+        SCENE.userspin = False
+        SCENE.userpan = False
+
+        rate(60)

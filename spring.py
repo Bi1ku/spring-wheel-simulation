@@ -3,10 +3,11 @@ from constants import ROD_X, NUM_SPRINGS
 
 
 class Spring:
-    def __init__(self, length, y_pos, spring_constant):
-        self.spring_length = length
-        self.spring_position = vector(ROD_X + 50, y_pos, 0)
-        self.spring_constant = spring_constant
+    def __init__(self, length, radius, y_pos, spring_constant):
+        self.radius = radius
+        self.length = length
+        self.pos = vector(ROD_X + 35, y_pos, 0)
+        self.constant = spring_constant
 
     @staticmethod
     def bind_num_springs(evt):
@@ -24,9 +25,12 @@ class Spring:
 
     def display(self):
         helix(
-            pos=self.spring_position,
+            pos=self.pos,
             axis=vec(1, 0, 0),
             color=color.cyan,
-            radius=100,
-            length=self.spring_length,
+            radius=self.radius,
+            length=self.length,
         )
+
+    def update(self):
+        pass
