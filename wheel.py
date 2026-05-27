@@ -1,4 +1,5 @@
 from vpython import *
+import math
 
 
 class Wheel:
@@ -62,7 +63,13 @@ class Wheel:
 
         elif evt.id == "d_theta":
             for spoke in self.spokes:
-                spoke.rotate(angle=evt.value, axis=vec(0, 0, 1), origin=vec(0, 0, 0))
+                spoke.rotate(
+                    angle=math.radians(
+                        3
+                    ),  # go reverse if decreasing d_theta, but figure out later
+                    axis=vec(0, 0, 1),
+                    origin=vec(0, 0, 0),
+                )
 
         self.calculateMomentOfInertia()
 
