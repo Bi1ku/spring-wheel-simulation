@@ -25,7 +25,7 @@ class Spring:
         elif evt.id == "spr_wheel_dist":
             self.spring.pos = vec(ROD_X + SPRING_LEFT_X_OFFSET, evt.value, 0) # figure out how to get this to work mid-simulation
         elif evt.id == "d_theta":
-            self.update_position(theta, wheel_radius)
+            self.update_position(theta)
 
     def update_position(self, theta):
         self.spring.length += theta * self.lever_arm_length
@@ -35,17 +35,17 @@ class Spring:
 
         if self.spring.length < self.length:
             return cross(
-                (k * spr_wheel_dist) * self.axis, 
+                (self.spr_const * self.lever_arm_length) * self.axis, 
                 self.lever_arm 
             )
         elif self.spring.length > self.length:
             return cross(
-                (-k * spr_wheel_dist) * self.axis, 
+                (-self.spr_const * self.lever_arm_length) * self.axis, 
                 self.lever_arm 
             )
         else:
             return 0
 
-    def update(self):
+    #def update(self):
         # where actual simulation goes
-        pass
+       # pass
