@@ -28,7 +28,7 @@ class Simulation:
             self.wheel.update_position(delta_theta)
             for spring in self.spring_arr:
                 spring.update_position(delta_theta)  
-
+            sleep(0.05)
             time_step +=1 
 
 
