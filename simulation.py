@@ -26,9 +26,20 @@ class Simulation:
 
     def loop(self):
         # print(self.previous_theta)
-        self.wheel.update()
-        for spring in self.spring_arr:
-            spring.update()
+        theta_amplitude = self.previous_theta
+        # print(theta_amplitude)
+        time_step = 0
+        while self.run:
+            angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
+            # print(angular_pos)
+            delta_theta = angular_pos - self.previous_theta
+            self.previous_theta = angular_pos
+
+            self.wheel.update_position(delta_theta)
+            for spring in self.spring_arr:
+                spring.update_position(delta_theta)
+            sleep(0.05)
+            time_step += 1
 
     def setup(self):
         SCENE.background = color.white
@@ -42,12 +53,13 @@ class Simulation:
         SCENE.userspin = False
         SCENE.userpan = False
 
+        self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
             for input in self.inputs:
                 input.visible = False
             SCENE.caption = ""
             self.menu()
-            sleep(5)
+            sleep(2.5)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
