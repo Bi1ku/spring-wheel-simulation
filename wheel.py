@@ -6,7 +6,7 @@ class Wheel:
     def __init__(self, radius, mass, springs):
         self.springs = springs
         self.mass = mass
-        self.time = 0
+        self.time = 0.0
 
         self.wheel = cylinder(
             pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),
@@ -93,6 +93,7 @@ class Wheel:
         self.ang_acc_curve.plot(
             self.time, pow(self.calculate_angular_frequency(), 2) * theta
         )  # fix this calculation later
+
         for spoke in self.spokes:
             spoke.rotate(
                 angle=-theta,

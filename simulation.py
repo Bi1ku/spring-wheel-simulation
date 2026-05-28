@@ -58,16 +58,16 @@ class Simulation:
         while not self.run:
             for input in self.inputs:
                 input.visible = False
-            #print(self.previous_theta)
+            # print(self.previous_theta)
 
             SCENE.caption = ""
             self.menu()
             if abs(self.spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                if (self.spring.spring.pos.y < 0):
+                if self.spring.spring.pos.y < 0:
                     self.spring.spring.pos.y = -self.wheel.wheel.radius
-                else: 
+                else:
                     self.spring.spring.pos.y = self.wheel.wheel.radius
-            sleep(0.5)
+            sleep(1)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
@@ -98,6 +98,9 @@ class Simulation:
             )  # use single spring for now
             self.spring_arr = [self.spring]
 
+            self.wheel.ang_acc_graph.delete()
+            self.wheel.ang_vel_graph.delete()
+            self.wheel.ang_pos_graph.delete()
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
