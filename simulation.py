@@ -22,6 +22,26 @@ class Simulation:
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
+        self.ang_pos_graph = graph(
+            title="Angular Position vs Time",
+            xtitle="Time (s)",
+            ytitle="Angular Position (rad)",
+        )
+        self.ang_pos_curve = gcurve(color=color.blue)
+        self.ang_vel_graph = graph(
+            title="Angular Velocity vs Time",
+            xtitle="Time (s)",
+            ytitle="Angular Velocity (rad/s)",
+        )
+        self.ang_vel_curve = gcurve(color=color.green)
+        self.ang_acc_graph = graph(
+            title="Angular Acceleration vs Time",
+            xtitle="Time (s)",
+            ytitle="Angular Acceleration (rad/s^2)",
+        )
+        self.ang_acc_curve = gcurve(color=color.orange)
+
+
         self.inputs = []
 
     def loop(self):
@@ -31,6 +51,8 @@ class Simulation:
         time_step = 0
         while self.run:
             angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
+            angular_velocity = - theta_amplitude * self.angular_frequency * sin(self.angular_frequency * time_step)
+            angular_acceleration = - theta_amplitude * pow(self.angular_frequency, 2) * cos(self.angular_frequency * time_step)
             # print(angular_pos)
             delta_theta = angular_pos - self.previous_theta
             self.previous_theta = angular_pos
@@ -38,6 +60,12 @@ class Simulation:
             self.wheel.update_position(delta_theta)
             for spring in self.spring_arr:
                 spring.update_position(delta_theta)
+
+            # self.ang_pos_graph.select()
+            self.ang_pos_curve.plot(time_step, angular_pos)
+            self.ang_vel_curve.plot(time_step, angular_velocity)
+            self.ang_acc_curve.plot(time_step, angular_acceleration)  # fix this calculation later
+
             sleep(0.05)
             self.wheel.time += 0.05
             time_step += 1

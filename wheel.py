@@ -46,25 +46,6 @@ class Wheel:
 
         # self.springPoints = points(pos=self.springs, color=vec(0, 1, 0))
 
-        self.ang_pos_graph = graph(
-            title="Angular Position vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Position (rad)",
-        )
-        self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(
-            title="Angular Velocity vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Velocity (rad/s)",
-        )
-        self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(
-            title="Angular Acceleration vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Acceleration (rad/s^2)",
-        )
-        self.ang_acc_curve = gcurve(color=color.orange)
-
         self.calculateMomentOfInertia()
 
     def calculateMomentOfInertia(self):
@@ -87,12 +68,6 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def update_position(self, theta):
-        # self.ang_pos_graph.select()
-        self.ang_pos_curve.plot(self.time, theta)
-        self.ang_vel_curve.plot(self.time, self.calculate_angular_frequency())
-        self.ang_acc_curve.plot(
-            self.time, pow(self.calculate_angular_frequency(), 2) * theta
-        )  # fix this calculation later
         for spoke in self.spokes:
             spoke.rotate(
                 angle=-theta,
