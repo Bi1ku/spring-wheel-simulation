@@ -19,10 +19,12 @@ class Simulation:
     def loop(self):
         #print(self.previous_theta)
         theta_amplitude = self.previous_theta
+        #print(theta_amplitude)
         time_step = 0
         while (self.run):
             angular_pos = (theta_amplitude * cos(self.angular_frequency * time_step))
-            delta_theta = self.previous_theta - angular_pos
+            #print(angular_pos)
+            delta_theta = angular_pos - self.previous_theta
             self.previous_theta = angular_pos 
         
             self.wheel.update_position(delta_theta)
