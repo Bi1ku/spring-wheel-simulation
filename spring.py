@@ -30,7 +30,7 @@ class Spring:
             self.spr_const = evt.value
         elif evt.id == "spr_wheel_dist":
             # figure out how to get this to work mid-simulation
-            self.spring.pos = vec(ROD_X + SPRING_LEFT_X_OFFSET, evt.value, 0)
+            self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
         elif evt.id == "d_theta":
             self.update_position(theta)
 
