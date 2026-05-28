@@ -46,6 +46,11 @@ class Simulation:
 
     def loop(self):
         # print(self.previous_theta)
+        print(len(self.inputs))
+        for i in range(len(self.inputs)): 
+            if i >= 2: # first two is the run and reset simulation buttom
+                self.inputs[i].delete()
+
         theta_amplitude = self.previous_theta
         # print(theta_amplitude)
         time_step = 0
@@ -84,9 +89,10 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            for input in self.inputs:
-                input.visible = False
+            #for input in self.inputs:
+                #input.visible = False
             #print(self.previous_theta)
+            self.inputs = []
 
             SCENE.caption = ""
             self.menu()
@@ -100,15 +106,15 @@ class Simulation:
     def menu(self):
         SCENE.append_to_caption("\n\n")
 
-        ### RUN SIM BUTTON ###
-        def bind_run(_):
+        ### RUN SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
+        def bind_run(_): 
             self.run = True
 
         self.inputs.append(button(bind=bind_run, text="Run Simulation"))
 
         SCENE.append_to_caption("   ")
 
-        ### RESET SIM BUTTON ###
+        ### RESET SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
         def bind_reset(_):
             for item in SCENE.objects:
                 item.visible = False
@@ -117,7 +123,7 @@ class Simulation:
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
             self.ang_acc_graph.delete()
-            
+
             self.run = False
 
             #self.previous_theta = 0
