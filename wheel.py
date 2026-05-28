@@ -91,7 +91,7 @@ class Wheel:
             total_components += spring.get_angular_frequency_component().z
 
         w_squared = abs(total_components/self.momentOfInertia)
-        print(w_squared)
+        #print(w_squared)
         return sqrt(w_squared)
 
     #def update(self):
