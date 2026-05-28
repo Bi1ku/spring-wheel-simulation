@@ -9,7 +9,7 @@ class Simulation:
     def __init__(self):
         self.run = False
         self.previous_theta = 0
-        self.small_angle_approx = True
+        self.small_angle = True
         self.pole = Pole()
         self.spring = Spring(
             length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
@@ -46,12 +46,12 @@ class Simulation:
 
     def loop(self):
         # print(self.previous_theta)
-        print(len(self.inputs))
+        #print(len(self.inputs))
         for i in range(len(self.inputs)): 
             if i >= 2: # first two is the run and reset simulation buttom
                 self.inputs[i].delete()
 
-        if (self.small_angle_approx):
+        if (self.small_angle):
             theta_amplitude = self.previous_theta
             # print(theta_amplitude)
             time_step = 0
@@ -130,7 +130,7 @@ class Simulation:
             self.run = False
 
             #self.previous_theta = 0
-            #self.small_angle_approx = True
+            #self.small_angle = True
             #self.pole = Pole()
             #self.spring = Spring(
                 #length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
@@ -148,16 +148,16 @@ class Simulation:
 
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
-            self.small_angle_approx = evt.checked
+            self.small_angle = evt.checked
             self.spring.change_config(evt = evt)
             #print("Sim: ")
-            #print(self.small_angle_approx)
+            #print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
         self.inputs.append(
             checkbox(
                 bind=angle_aprox_bind, 
-                checked=self.small_angle_approx, 
+                checked=self.small_angle, 
                 id = "small_angle"
             )
         )

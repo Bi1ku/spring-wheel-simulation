@@ -11,14 +11,16 @@ class Spring:
     def __init__(self, length, radius, spr_wheel_dist, spr_const, small_angle = True):
         self.spr_const = spr_const
         self.length = length  # natural length
-        self.lever_arm_length = spr_wheel_dist
+        self.lever_arm_length = abs(spr_wheel_dist)
+        self.left_y_level = spr_wheel_dist
         self.lever_arm = vector(0, spr_wheel_dist, 0)
         self.axis = vec(1, 0, 0)  # POSITIVE X
         self.small_angle = small_angle
+        self.radius = radius
 
         # Spring length is the strecthed length, not the natural length
         self.spring = helix(
-            pos=vec(SPRING_LEFT_X, spr_wheel_dist, 0),
+            pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
             axis=self.axis,
             color=color.cyan,
             radius=radius,
@@ -40,8 +42,29 @@ class Spring:
             #print(self.small_angle)
 
     def update_position(self, theta):
-        self.spring.length += theta * self.lever_arm_length
-        self.lever_arm = rotate(self.lever_arm, angle=theta, axis=vector(0, 0, 1))
+        if self.small_angle: 
+            self.spring.length += theta * self.lever_arm_length
+            self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
+        else: 
+            self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
+            # self.spring = helix(
+            #     pos=vec(0, 0, 0),
+            #     axis=self.lever_arm,
+            #     color=color.cyan,
+            #     radius=self.radius,
+            #     length=(self.left_y_level),
+            #     coils=self.length / self.radius,
+            # )
+            self.axis = (self.lever_arm - self.spring.pos)
+            self.spring.visible = False
+            self.spring = helix(
+                pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
+                axis=self.axis,
+                color=color.cyan,
+                radius=self.radius,
+                length=(mag(self.axis)),
+                coils=self.length / self.radius,
+            )
 
     def get_angular_frequency_component(self):
 
