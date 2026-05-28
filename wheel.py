@@ -61,14 +61,17 @@ class Wheel:
             self.spokes[3].modify(1, pos=vec(0, -evt.value, 0))
 
         elif evt.id == "d_theta":
-            for spoke in self.spokes:
+            self.update_position(theta)
+
+        self.calculateMomentOfInertia()
+
+    def update_position(self, theta):
+        for spoke in self.spokes:
                 spoke.rotate(
                     angle=-theta,
                     axis=vec(0, 0, 1),
                     origin=vec(0, 0, 0),
                 )
-
-        self.calculateMomentOfInertia()
 
     def calculate_angular_frequency(self):
         '''
@@ -84,14 +87,14 @@ class Wheel:
         '''
 
         total_components = 0
-        for spring in springs:
+        for spring in self.springs:
             total_components += spring.get_angular_frequency_component().z
 
-        w_squared = total_components/self.momentOfInertia
-        
+        w_squared = abs(total_components/self.momentOfInertia)
+        print(w_squared)
         return sqrt(w_squared)
 
-    def update(self):
+    #def update(self):
         # where the actual simulation goes
         # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
-        pass
+       # pass

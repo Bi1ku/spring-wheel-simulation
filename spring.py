@@ -41,12 +41,18 @@ class Spring:
     def get_angular_frequency_component(self):
 
         if self.spring.length < self.length:
-            return cross((k * spr_wheel_dist) * self.axis, self.lever_arm)
+            return cross(
+                (self.spr_const * self.lever_arm_length) * self.axis, 
+                self.lever_arm 
+            )
         elif self.spring.length > self.length:
-            return cross((-k * spr_wheel_dist) * self.axis, self.lever_arm)
+            return cross(
+                (-self.spr_const * self.lever_arm_length) * self.axis, 
+                self.lever_arm 
+            )
         else:
             return 0
 
-    def update(self):
+    #def update(self):
         # where actual simulation goes
-        pass
+       # pass
