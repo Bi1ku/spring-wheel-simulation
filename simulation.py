@@ -114,6 +114,10 @@ class Simulation:
                 item.visible = False
                 del item
 
+            self.ang_pos_graph.delete()
+            self.ang_vel_graph.delete()
+            self.ang_acc_graph.delete()
+            
             self.run = False
 
             #self.previous_theta = 0
