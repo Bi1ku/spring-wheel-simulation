@@ -119,15 +119,16 @@ class Simulation:
 
         ### RESET SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
         def bind_reset(_):
-            for item in SCENE.objects:
-                item.visible = False
-                del item
+            if self.run: #only want to reset if it was already running
+                for item in SCENE.objects:
+                    item.visible = False
+                    del item
 
-            self.ang_pos_graph.delete()
-            self.ang_vel_graph.delete()
-            self.ang_acc_graph.delete()
+                self.ang_pos_graph.delete()
+                self.ang_vel_graph.delete()
+                self.ang_acc_graph.delete()
 
-            self.run = False
+                self.run = False
 
             #self.previous_theta = 0
             #self.small_angle = True
