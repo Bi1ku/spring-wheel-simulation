@@ -44,7 +44,7 @@ class Simulation:
             time_step += 1
 
             while self.pause:
-                sleep(0.5)
+                sleep(0.25)
 
     def setup(self):
         SCENE.background = color.white
