@@ -8,12 +8,13 @@ from constants import (
 
 
 class Spring:
-    def __init__(self, length, radius, spr_wheel_dist, spr_const):
+    def __init__(self, length, radius, spr_wheel_dist, spr_const, small_angle = True):
         self.spr_const = spr_const
         self.length = length  # natural length
         self.lever_arm_length = spr_wheel_dist
         self.lever_arm = vector(0, spr_wheel_dist, 0)
         self.axis = vec(1, 0, 0)  # POSITIVE X
+        self.small_angle = small_angle
 
         # Spring length is the strecthed length, not the natural length
         self.spring = helix(
@@ -25,7 +26,7 @@ class Spring:
             coils=length / radius,
         )
 
-    def change_config(self, evt, wheel_radius, theta=0):
+    def change_config(self, evt, theta=0):
         if evt.id == "spr_const":
             self.spr_const = evt.value
         elif evt.id == "spr_wheel_dist":
@@ -33,6 +34,10 @@ class Spring:
             self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
         elif evt.id == "d_theta":
             self.update_position(theta)
+        elif evt.id == "small_angle":
+            self.small_angle = evt.checked
+            #print("Spring: ")
+            #print(self.small_angle)
 
     def update_position(self, theta):
         self.spring.length += theta * self.lever_arm_length
