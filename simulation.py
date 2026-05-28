@@ -58,9 +58,16 @@ class Simulation:
         while not self.run:
             for input in self.inputs:
                 input.visible = False
+            #print(self.previous_theta)
+
             SCENE.caption = ""
             self.menu()
-            sleep(2.5)
+            if abs(self.spring.spring.pos.y) > abs(self.wheel.wheel.radius):
+                if (self.spring.spring.pos.y < 0):
+                    self.spring.spring.pos.y = -self.wheel.wheel.radius
+                else: 
+                    self.spring.spring.pos.y = self.wheel.wheel.radius
+            sleep(0.5)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
@@ -124,14 +131,14 @@ class Simulation:
             slider(
                 bind=d_theta_bind,
                 min=radians(-30),
-                value=0,
+                value=self.previous_theta,
                 max=radians(30),
                 step=radians(5),
                 length=200,
                 id="d_theta",
             )
         )
-        d_theta_text = wtext(text="0 rad\n")
+        d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
 
         ### MASS SLIDER ###
         def mass_bind(evt):
@@ -200,7 +207,7 @@ class Simulation:
         self.inputs.append(
             slider(
                 bind=spr_wheel_dist_bind,
-                min=0,
+                min=-self.wheel.wheel.radius,
                 max=self.wheel.wheel.radius,
                 value=self.spring.spring.pos.y,
                 step=1,
