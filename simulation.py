@@ -8,6 +8,7 @@ from constants import SCENE, SPRING_STRETCHED_START_LENGTH
 class Simulation:
     def __init__(self):
         self.run = False
+        self.pause = False
         self.previous_theta = 0
         self.small_angle_approx = True
         self.pole = Pole()
@@ -41,6 +42,9 @@ class Simulation:
             sleep(0.05)
             self.wheel.time += 0.05
             time_step += 1
+
+            while self.pause:
+                sleep(0.5)
 
     def setup(self):
         SCENE.background = color.white
@@ -87,6 +91,7 @@ class Simulation:
                 del item
 
             self.run = False
+            self.pause = False
             self.previous_theta = 0
             self.small_angle_approx = True
             self.pole = Pole()
@@ -104,6 +109,13 @@ class Simulation:
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
+        SCENE.append_to_caption("   ")
+
+        ## PAUSE SIM BUTTON ###
+        def bind_pause(_):
+            self.pause = not self.pause
+
+        self.inputs.append(button(bind=bind_pause, text="Pause/Unpause Simulation"))
 
         SCENE.append_to_caption("\n\n")
 
