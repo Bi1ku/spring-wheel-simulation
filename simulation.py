@@ -115,18 +115,19 @@ class Simulation:
                 del item
 
             self.run = False
-            self.previous_theta = 0
-            self.small_angle_approx = True
-            self.pole = Pole()
-            self.spring = Spring(
-                length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-                radius=30,
-                spr_wheel_dist=120,
-                spr_const=2,
-            )  # use single spring for now
-            self.spring_arr = [self.spring]
 
-            self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
+            #self.previous_theta = 0
+            #self.small_angle_approx = True
+            #self.pole = Pole()
+            #self.spring = Spring(
+                #length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
+                #radius=30,
+                #spr_wheel_dist=120,
+                #spr_const=2,
+            #)  # use single spring for now
+            #self.spring_arr = [self.spring]
+
+            #self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
 
