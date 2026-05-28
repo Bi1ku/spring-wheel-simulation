@@ -61,7 +61,12 @@ class Simulation:
 
             SCENE.caption = ""
             self.menu()
-            sleep(2.5)
+            if abs(self.spring.spring.pos.y) > abs(self.wheel.wheel.radius):
+                if (self.spring.spring.pos.y < 0):
+                    self.spring.spring.pos.y = -self.wheel.wheel.radius
+                else: 
+                    self.spring.spring.pos.y = self.wheel.wheel.radius
+            sleep(0.5)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
@@ -201,7 +206,7 @@ class Simulation:
         self.inputs.append(
             slider(
                 bind=spr_wheel_dist_bind,
-                min=0,
+                min=-self.wheel.wheel.radius,
                 max=self.wheel.wheel.radius,
                 value=self.spring.spring.pos.y,
                 step=1,
