@@ -52,6 +52,8 @@ class Simulation:
         SCENE.userspin = False
         SCENE.userpan = False
 
+        self.angular_frequency = self.wheel.calculate_angular_frequency()
+
         rate(60)
 
     def menu(self):
