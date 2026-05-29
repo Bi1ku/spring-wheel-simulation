@@ -111,6 +111,9 @@ class Simulation:
             # input.visible = False
             # print(self.previous_theta)
             self.inputs = []
+            for spring in self.spring_arr:
+                # print(spring.spring.pos.y)
+                pass
 
             SCENE.caption = ""
             self.menu()
@@ -193,6 +196,7 @@ class Simulation:
 
             for spring in self.spring_arr:
                 spring.change_config(evt=evt, theta=new_value)
+
             self.wheel.change_config(evt=evt, theta=new_value)
 
         SCENE.append_to_caption("Angular Displacement: ")

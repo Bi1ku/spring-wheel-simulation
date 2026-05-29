@@ -1,10 +1,5 @@
 from vpython import *
-from constants import (
-    ROD_X,
-    SPRING_LEFT_X,
-    SPRING_STRETCHED_START_LENGTH,
-    SPRING_LEFT_X_OFFSET,
-)
+from constants import SPRING_LEFT_X, SPRING_STRETCHED_START_LENGTH
 
 
 class Spring:
@@ -37,6 +32,7 @@ class Spring:
         elif "spr_wheel_dist" in evt.id and changed_num == num:
             # figure out how to get this to work mid-simulation
             self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
+            self.lever_arm_length = abs(evt.value)
         elif "d_theta" in evt.id:
             self.update_position(theta)
         elif evt.id == "small_angle":
