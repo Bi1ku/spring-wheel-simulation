@@ -8,7 +8,7 @@ from constants import (
 
 
 class Spring:
-    def __init__(self, length, radius, spr_wheel_dist, spr_const, small_angle = True):
+    def __init__(self, length, radius, spr_wheel_dist, spr_const, small_angle=True):
         self.spr_const = spr_const
         self.length = length  # natural length
         self.lever_arm_length = abs(spr_wheel_dist)
@@ -16,7 +16,7 @@ class Spring:
         self.lever_arm = vector(0, spr_wheel_dist, 0)
         self.axis = vec(1, 0, 0)  # POSITIVE X
         self.small_angle = small_angle
-        #self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * self.lever_arm_length) * self.axis)) * 100, shaftwidth = 10)
+        # self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * self.lever_arm_length) * self.axis)) * 100, shaftwidth = 10)
 
         self.radius = radius
 
@@ -30,27 +30,28 @@ class Spring:
             coils=length / radius,
         )
 
-    def change_config(self, evt, theta=0):
-        if evt.id == "spr_const":
+    def change_config(self, evt, num=0, theta=0):
+        changed_num = num if num == 0 else int(evt.id[-1])
+        if "spr_const" in evt.id and changed_num == num:
             self.spr_const = evt.value
-        elif evt.id == "spr_wheel_dist":
+        elif "spr_wheel_dist" in evt.id and changed_num == num:
             # figure out how to get this to work mid-simulation
             self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
-        elif evt.id == "d_theta":
+        elif "d_theta" in evt.id:
             self.update_position(theta)
         elif evt.id == "small_angle":
             self.small_angle = evt.checked
-            #print("Spring: ")
-            #print(self.small_angle)
+            # print("Spring: ")
+            # print(self.small_angle)
 
     def update_position(self, theta):
-        if self.small_angle: 
+        if self.small_angle:
             self.spring.length += theta * self.lever_arm_length
             self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
             # self.arrow.visible = False
             # if self.spring.length < self.length:
             #     self.arrow = arrow(pos = self.lever_arm, axis = norm((self.spr_const * self.lever_arm_length) * self.axis) * 100, shaftwidth = 10)
-            # elif self.spring.length > self.length: 
+            # elif self.spring.length > self.length:
             #     self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * self.lever_arm_length) * self.axis)) * 100, shaftwidth = 10)
             # self.spring.visible = False
             # self.spring = helix(
@@ -61,9 +62,9 @@ class Spring:
             #     length=(self.left_y_level),
             #     coils=self.length / self.radius,
             # )
-        else: 
+        else:
             self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
-            self.axis = (self.lever_arm - self.spring.pos)
+            self.axis = self.lever_arm - self.spring.pos
             self.spring.visible = False
             self.spring = helix(
                 pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
@@ -73,29 +74,28 @@ class Spring:
                 length=(mag(self.axis)),
                 coils=self.length / self.radius,
             )
-            #print(self.spring.length - self.length)
-            #self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis)) * 100, shaftwidth = 10)
+            # print(self.spring.length - self.length)
+            # self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis)) * 100, shaftwidth = 10)
 
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
             return cross(
-                (self.spr_const * self.lever_arm_length) * self.axis, 
-                self.lever_arm 
+                (self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm
             )
         elif self.spring.length > self.length:
             return cross(
-                -1 * ((self.spr_const * self.lever_arm_length) * self.axis), 
-                self.lever_arm 
+                -1 * ((self.spr_const * self.lever_arm_length) * self.axis),
+                self.lever_arm,
             )
         else:
-            return vec(0,0,0)
+            return vec(0, 0, 0)
 
     def get_torque(self):
         return cross(
-            -1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis), 
-            self.lever_arm 
-        ) 
+            -1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),
+            self.lever_arm,
+        )
 
-    #def update(self):
-        # where actual simulation goes
-       # pass
+    # def update(self):
+    # where actual simulation goes
+    # pass

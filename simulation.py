@@ -12,13 +12,14 @@ class Simulation:
         self.previous_theta = 0
         self.small_angle = True
         self.pole = Pole()
-        self.spring = Spring(
-            length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-            radius=30,
-            spr_wheel_dist=120,
-            spr_const=2,
-        )  # use single spring for now
-        self.spring_arr = [self.spring]
+        self.spring_arr = [
+            Spring(
+                length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
+                radius=30,
+                spr_wheel_dist=120,
+                spr_const=2,
+            )
+        ]
 
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
@@ -42,17 +43,18 @@ class Simulation:
         )
         self.ang_acc_curve = gcurve(color=color.orange)
 
-
         self.inputs = []
+        self.spr_wheel_dist_texts = []
+        self.spr_const_texts = []
 
     def loop(self):
         # print(self.previous_theta)
-        #print(len(self.inputs))
-        for i in range(len(self.inputs)): 
-            if i >= 3: # first three is the run, reset, pause simulation buttons
+        # print(len(self.inputs))
+        for i in range(len(self.inputs)):
+            if i >= 3:  # first three is the run, reset, pause simulation buttons
                 self.inputs[i].delete()
 
-        if (self.small_angle):
+        if self.small_angle:
             theta_amplitude = self.previous_theta
             # print(theta_amplitude)
             time_step = 0
@@ -60,8 +62,16 @@ class Simulation:
                 while self.pause:
                     sleep(0.5)
                 angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
-                angular_velocity = - theta_amplitude * self.angular_frequency * sin(self.angular_frequency * time_step)
-                angular_acceleration = - theta_amplitude * pow(self.angular_frequency, 2) * cos(self.angular_frequency * time_step)
+                angular_velocity = (
+                    -theta_amplitude
+                    * self.angular_frequency
+                    * sin(self.angular_frequency * time_step)
+                )
+                angular_acceleration = (
+                    -theta_amplitude
+                    * pow(self.angular_frequency, 2)
+                    * cos(self.angular_frequency * time_step)
+                )
                 # print(angular_pos)
                 delta_theta = angular_pos - self.previous_theta
                 self.previous_theta = angular_pos
@@ -73,12 +83,14 @@ class Simulation:
                 # self.ang_pos_graph.select()
                 self.ang_pos_curve.plot(time_step, angular_pos)
                 self.ang_vel_curve.plot(time_step, angular_velocity)
-                self.ang_acc_curve.plot(time_step, angular_acceleration)  # fix this calculation later
+                self.ang_acc_curve.plot(
+                    time_step, angular_acceleration
+                )  # fix this calculation later
 
                 sleep(0.05)
                 self.wheel.time += 0.05
                 time_step += 1
-        else: 
+        else:
             pass
 
     def setup(self):
@@ -95,25 +107,26 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            #for input in self.inputs:
-                #input.visible = False
-            #print(self.previous_theta)
+            # for input in self.inputs:
+            # input.visible = False
+            # print(self.previous_theta)
             self.inputs = []
 
             SCENE.caption = ""
             self.menu()
-            if abs(self.spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                if self.spring.spring.pos.y < 0:
-                    self.spring.spring.pos.y = -self.wheel.wheel.radius
-                else:
-                    self.spring.spring.pos.y = self.wheel.wheel.radius
-            sleep(1)
+            for spring in self.spring_arr:
+                if abs(spring.spring.pos.y) > abs(self.wheel.wheel.radius):
+                    if spring.spring.pos.y < 0:
+                        spring.spring.pos.y = -self.wheel.wheel.radius
+                    else:
+                        spring.spring.pos.y = self.wheel.wheel.radius
+                sleep(1)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
 
         ### RUN SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
-        def bind_run(_): 
+        def bind_run(_):
             self.run = True
 
         self.inputs.append(button(bind=bind_run, text="Run Simulation"))
@@ -129,15 +142,16 @@ class Simulation:
             self.run = False
             self.pause = False
             self.previous_theta = 0
-            self.small_angle_approx = True
+            self.small_angle = True
             self.pole = Pole()
-            self.spring = Spring(
-                length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-                radius=30,
-                spr_wheel_dist=120,
-                spr_const=2,
-            )  # use single spring for now
-            self.spring_arr = [self.spring]
+            self.spring_arr = [
+                Spring(
+                    length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
+                    radius=30,
+                    spr_wheel_dist=120,
+                    spr_const=2,
+                )  # use single spring for now
+            ]
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
@@ -158,17 +172,14 @@ class Simulation:
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
-            self.spring.change_config(evt = evt)
-            #print("Sim: ")
-            #print(self.small_angle)
+            for spring in self.spring_arr:
+                spring.change_config(evt=evt)
+            # print("Sim: ")
+            # print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
         self.inputs.append(
-            checkbox(
-                bind=angle_aprox_bind, 
-                checked=self.small_angle, 
-                id = "small_angle"
-            )
+            checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
         )
 
         SCENE.append_to_caption("\n\n")
@@ -180,9 +191,8 @@ class Simulation:
             new_value = evt.value - self.previous_theta
             self.previous_theta = evt.value
 
-            self.spring.change_config(
-                evt=evt, theta=new_value
-            )
+            for spring in self.spring_arr:
+                spring.change_config(evt=evt, theta=new_value)
             self.wheel.change_config(evt=evt, theta=new_value)
 
         SCENE.append_to_caption("Angular Displacement: ")
@@ -222,7 +232,8 @@ class Simulation:
         def radius_bind(evt):
             radius_text.text = str(evt.value) + " m\n"
             self.wheel.change_config(evt=evt)  # cleanup in future
-            self.spring.change_config(evt=evt)
+            for spring in self.spring_arr:
+                spring.change_config(evt=evt)
 
         SCENE.append_to_caption("Wheel Radius: ")
         self.inputs.append(
@@ -238,54 +249,84 @@ class Simulation:
         )
         radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
 
-        ### SPRING CONSTANT SLIDER ###
-        def spr_const_bind(evt):
-            spr_const_text.text = str(evt.value) + " N/m\n"
-            self.spring.change_config(evt=evt)
+        ### NUMBER OF SPRINGS DROPDOWN ###
+        def num_springs_bind(evt):
+            if evt.value > len(self.spring_arr):
+                self.spring_arr.append(
+                    Spring(
+                        length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
+                        radius=30,
+                        spr_wheel_dist=evt.value,
+                        spr_const=2,
+                    )
+                )
+            elif evt.value < len(self.spring_arr):
+                self.spring_arr[-1].spring.visible = False
+                self.spring_arr[-1].spring.delete()
+                self.spring_arr.pop()
 
-        SCENE.append_to_caption("Spring Constant: ")
+            num_springs_text.text = str(evt.value) + " springs \n"
+
+        SCENE.append_to_caption("Number of Springs: ")
         self.inputs.append(
             slider(
-                bind=spr_const_bind,
-                min=0.5,
-                max=5,
-                value=self.spring.spr_const,
-                step=0.1,
+                bind=num_springs_bind,
+                min=1,
+                max=3,
+                value=len(self.spring_arr),
+                step=1,
                 length=200,
-                id="spr_const",
             )
         )
-        spr_const_text = wtext(text=str(self.spring.spr_const) + " N/m\n")
+        num_springs_text = wtext(text=str(len(self.spring_arr)) + " springs \n")
+        SCENE.append_to_caption("\n")
+
+        ### SPRING CONSTANT SLIDER ###
+        def spr_const_bind(evt):
+            self.spr_const_texts[int(evt.id[-1])].text = str(evt.value) + " N/m\n"
+            for i in range(len(self.spring_arr)):
+                self.spring_arr[i].change_config(evt=evt, num=i + 1)
+
+        for i in range(len(self.spring_arr)):
+            SCENE.append_to_caption(f"Spring {i + 1} Constant: ")
+            self.inputs.append(
+                slider(
+                    bind=spr_const_bind,
+                    min=0.5,
+                    max=5,
+                    value=self.spring_arr[i].spr_const,
+                    step=0.1,
+                    length=200,
+                    id=f"spr_const_{i + 1}",
+                )
+            )
+            self.spr_const_texts.append(
+                wtext(text=str(self.spring_arr[i].spr_const) + " N/m\n")
+            )
 
         ### SPRING-WHEEL DISTANCE SLIDER ###
         def spr_wheel_dist_bind(evt):
-            spr_wheel_dist_text.text = str(evt.value) + " m\n"
-            self.spring.change_config(evt=evt)
-
-        SCENE.append_to_caption("Spring-Wheel Distance: ")
-        self.inputs.append(
-            slider(
-                bind=spr_wheel_dist_bind,
-                min=-self.wheel.wheel.radius,
-                max=self.wheel.wheel.radius,
-                value=self.spring.spring.pos.y,
-                step=1,
-                length=200,
-                id="spr_wheel_dist",
+            self.spr_wheel_dist_texts[int(evt.id[-1]) - 1].text = (
+                str(evt.value) + " m\n"
             )
-        )
-        spr_wheel_dist_text = wtext(text=str(self.spring.spring.pos.y) + " m\n")
+            for i in range(len(self.spring_arr)):
+                self.spring_arr[i].change_config(evt=evt, num=i + 1)
 
-        ### NUMBER OF SPRINGS DROPDOWN ###
-        choices = ["1 Spring", "2 Springs", "3 Springs"]
+        for i in range(len(self.spring_arr)):
+            SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance:")
+            self.inputs.append(
+                slider(
+                    bind=spr_wheel_dist_bind,
+                    min=-self.wheel.wheel.radius,
+                    max=self.wheel.wheel.radius,
+                    value=self.spring_arr[i].spring.pos.y,
+                    step=1,
+                    length=200,
+                    id=f"spr_wheel_dist_{i + 1}",
+                )
+            )
+            self.spr_wheel_dist_texts.append(
+                wtext(text=str(self.spring_arr[i].spring.pos.y) + " m\n")
+            )
 
-        def num_springs_bind(evt):
-            if evt.index == 1:
-                self.num_springs = 1
-            elif evt.index == 2:
-                self.num_springs = 2
-            elif evt.index == 3:
-                self.num_springs = 3
-
-        SCENE.append_to_caption("Number of Springs: ")
-        self.inputs.append(menu(bind=num_springs_bind, choices=choices))
+        SCENE.append_to_caption("\n\n\n\n\n\n\n")
