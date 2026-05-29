@@ -8,6 +8,7 @@ from constants import SCENE, SPRING_STRETCHED_START_LENGTH
 class Simulation:
     def __init__(self):
         self.run = False
+        self.pause = False
         self.previous_theta = 0
         self.small_angle = True
         self.pole = Pole()
@@ -48,7 +49,7 @@ class Simulation:
         # print(self.previous_theta)
         #print(len(self.inputs))
         for i in range(len(self.inputs)): 
-            if i >= 2: # first two is the run and reset simulation buttom
+            if i >= 3: # first three is the run, reset, pause simulation buttons
                 self.inputs[i].delete()
 
         if (self.small_angle):
@@ -56,6 +57,8 @@ class Simulation:
             # print(theta_amplitude)
             time_step = 0
             while self.run:
+                while self.pause:
+                    sleep(0.5)
                 angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
                 angular_velocity = - theta_amplitude * self.angular_frequency * sin(self.angular_frequency * time_step)
                 angular_acceleration = - theta_amplitude * pow(self.angular_frequency, 2) * cos(self.angular_frequency * time_step)
@@ -104,7 +107,7 @@ class Simulation:
                     self.spring.spring.pos.y = -self.wheel.wheel.radius
                 else: 
                     self.spring.spring.pos.y = self.wheel.wheel.radius
-            sleep(0.5)
+            sleep(1)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
@@ -119,31 +122,37 @@ class Simulation:
 
         ### RESET SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
         def bind_reset(_):
-            if self.run: #only want to reset if it was already running
-                for item in SCENE.objects:
-                    item.visible = False
-                    del item
+            for item in SCENE.objects:
+                item.visible = False
+                del item
 
-                self.ang_pos_graph.delete()
-                self.ang_vel_graph.delete()
-                self.ang_acc_graph.delete()
+            self.run = False
+            self.pause = False
+            self.previous_theta = 0
+            self.small_angle_approx = True
+            self.pole = Pole()
+            self.spring = Spring(
+                length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
+                radius=30,
+                spr_wheel_dist=120,
+                spr_const=2,
+            )  # use single spring for now
+            self.spring_arr = [self.spring]
 
-                self.run = False
-
-            #self.previous_theta = 0
-            #self.small_angle = True
-            #self.pole = Pole()
-            #self.spring = Spring(
-                #length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-                #radius=30,
-                #spr_wheel_dist=120,
-                #spr_const=2,
-            #)  # use single spring for now
-            #self.spring_arr = [self.spring]
-
-            #self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
+            self.ang_pos_graph.delete()
+            self.ang_vel_graph.delete()
+            self.ang_acc_graph.delete()
+            self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
+
+        SCENE.append_to_caption("\n\n")
+
+        def bind_pause(_):
+            self.pause = not self.pause
+            print(self.pause)
+
+        self.inputs.append(button(bind=bind_pause, text="Pause/Unpause Simulation"))
 
         SCENE.append_to_caption("\n\n")
 
