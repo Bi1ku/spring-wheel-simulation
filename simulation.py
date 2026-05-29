@@ -181,9 +181,9 @@ class Simulation:
         self.inputs.append(
             slider(
                 bind=d_theta_bind,
-                min=radians(-30),
+                min=radians(-30) if self.small_angle else radians(-180),
                 value=self.previous_theta,
-                max=radians(30),
+                max=radians(30) if self.small_angle else radians(180),
                 step=radians(5),
                 length=200,
                 id="d_theta",
