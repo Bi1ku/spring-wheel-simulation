@@ -42,8 +42,16 @@ class Spring:
 
     def update_position(self, theta):
         if self.small_angle:
-            self.spring.length += theta * self.lever_arm_length
-            self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
+            if self.spring.pos.y < 0:
+                self.spring.length += -theta * self.lever_arm_length
+                self.lever_arm = rotate(
+                    self.lever_arm, angle=theta, axis=vector(0, 0, 1)
+                )
+            else:
+                self.spring.length += theta * self.lever_arm_length
+                self.lever_arm = rotate(
+                    self.lever_arm, angle=-theta, axis=vector(0, 0, 1)
+                )
             # self.arrow.visible = False
             # if self.spring.length < self.length:
             #     self.arrow = arrow(pos = self.lever_arm, axis = norm((self.spr_const * self.lever_arm_length) * self.axis) * 100, shaftwidth = 10)
