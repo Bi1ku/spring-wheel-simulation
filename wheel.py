@@ -118,6 +118,8 @@ class Wheel:
         -k(l * theta) x l = 0.5 * m * r^2 * a
         (-k*l^2)/(0.5 * m*r^2) * theta = a
         so we only need to get the sum of all -k * l^2 (still need to consider them as vectors) to calculate angular frequency
+
+        without small angle approximation, we also need to consider the vertical displacement of the spring in the spring force. this also makes the force not perindicular to the lever arm.
         """
 
         total_components = 0

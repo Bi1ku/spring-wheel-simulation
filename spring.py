@@ -1,9 +1,7 @@
 from vpython import *
 from constants import (
-    ROD_X,
     SPRING_LEFT_X,
     SPRING_STRETCHED_START_LENGTH,
-    SPRING_LEFT_X_OFFSET,
 )
 
 
@@ -25,13 +23,15 @@ class Spring:
             coils=length / radius,
         )
 
-    def change_config(self, evt, wheel_radius, theta=0):
-        if evt.id == "spr_const":
+    def change_config(self, evt, wheel_radius, num, theta=0):
+        changed_num = num if num == 0 else int(evt.id[-1])
+
+        if "spr_const" in evt.id and changed_num == num:
             self.spr_const = evt.value
-        elif evt.id == "spr_wheel_dist":
+        elif "spr_wheel_dist" in evt.id and changed_num == num:
             # figure out how to get this to work mid-simulation
             self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
-        elif evt.id == "d_theta":
+        elif "d_theta" in evt.id:
             self.update_position(theta)
 
     def update_position(self, theta):
@@ -39,20 +39,17 @@ class Spring:
         self.lever_arm = rotate(self.lever_arm, angle=theta, axis=vector(0, 0, 1))
 
     def get_angular_frequency_component(self):
-
         if self.spring.length < self.length:
             return cross(
-                (self.spr_const * self.lever_arm_length) * self.axis, 
-                self.lever_arm 
+                (self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm
             )
         elif self.spring.length > self.length:
             return cross(
-                (-self.spr_const * self.lever_arm_length) * self.axis, 
-                self.lever_arm 
+                (-self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm
             )
         else:
             return 0
 
-    #def update(self):
-        # where actual simulation goes
-       # pass
+    # def update(self):
+    # where actual simulation goes
+    # pass
