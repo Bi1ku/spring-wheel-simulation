@@ -6,7 +6,7 @@ class Wheel:
     def __init__(self, radius, mass, springs):
         self.springs = springs
         self.mass = mass
-        self.time = 0
+        self.time = 0.0
 
         self.wheel = cylinder(
             pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),

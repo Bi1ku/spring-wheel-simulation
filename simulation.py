@@ -103,9 +103,9 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             if abs(self.spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                if (self.spring.spring.pos.y < 0):
+                if self.spring.spring.pos.y < 0:
                     self.spring.spring.pos.y = -self.wheel.wheel.radius
-                else: 
+                else:
                     self.spring.spring.pos.y = self.wheel.wheel.radius
             sleep(1)
 
@@ -145,12 +145,11 @@ class Simulation:
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
+        SCENE.append_to_caption("   ")
 
-        SCENE.append_to_caption("\n\n")
-
+        ## PAUSE SIM BUTTON ###
         def bind_pause(_):
             self.pause = not self.pause
-            print(self.pause)
 
         self.inputs.append(button(bind=bind_pause, text="Pause/Unpause Simulation"))
 
