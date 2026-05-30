@@ -1,3 +1,4 @@
+Web VPython 3.2
 from vpython import *
 
 SCENE = canvas(title="Wheel and Spring Simulation", width=800, height=600)
@@ -12,14 +13,7 @@ SPRING_STRETCHED_START_LENGTH = WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)
 
 class Pole:
     def __init__(self):
-        curve(
-            pos=[
-                vec(ROD_X, SCENE.height, 0),
-                vec(ROD_X, -SCENE.height, 0),
-            ],
-            color=color.black,
-            radius=10,
-        )
+        curve(pos=[vec(ROD_X, SCENE.height, 0), vec(ROD_X, -SCENE.height, 0)],color=color.black,radius=10,)
 
 
 class Spring:
@@ -36,14 +30,7 @@ class Spring:
         self.radius = radius
 
         # Spring length is the strecthed length, not the natural length
-        self.spring = helix(
-            pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
-            axis=self.axis,
-            color=color.cyan,
-            radius=radius,
-            length=(SPRING_STRETCHED_START_LENGTH),
-            coils=length / radius,
-        )
+        self.spring = helix(pos=vec(SPRING_LEFT_X, self.left_y_level, 0),axis=self.axis,color=color.cyan,radius=radius,length=(SPRING_STRETCHED_START_LENGTH),coils=length / radius)
 
     def change_config(self, evt, theta=0):
         if evt.id == "spr_const":
@@ -80,35 +67,20 @@ class Spring:
             self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
             self.axis = self.lever_arm - self.spring.pos
             self.spring.visible = False
-            self.spring = helix(
-                pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
-                axis=self.axis,
-                color=color.cyan,
-                radius=self.radius,
-                length=(mag(self.axis)),
-                coils=self.length / self.radius,
-            )
+            self.spring = helix(pos=vec(SPRING_LEFT_X, self.left_y_level, 0),axis=self.axis,color=color.cyan,radius=self.radius,length=(mag(self.axis)),coils=self.length / self.radius)
             # print(self.spring.length - self.length)
             # self.arrow = arrow(pos = self.lever_arm, axis = norm(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis)) * 100, shaftwidth = 10)
 
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
-            return cross(
-                (self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm
-            )
+            return cross((self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm)
         elif self.spring.length > self.length:
-            return cross(
-                -1 * ((self.spr_const * self.lever_arm_length) * self.axis),
-                self.lever_arm,
-            )
+            return cross(-1 * ((self.spr_const * self.lever_arm_length) * self.axis),self.lever_arm)
         else:
             return vec(0, 0, 0)
 
     def get_torque(self):
-        return cross(
-            -1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),
-            self.lever_arm,
-        )
+        return cross(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),self.lever_arm)
         pass
 
     # def update(self):
@@ -122,39 +94,15 @@ class Wheel:
         self.mass = mass
         self.time = 0.0
 
-        self.wheel = cylinder(
-            pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),
-            axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),
-            radius=radius,
-            length=1,
-            color=color.red,
-            opacity=0.5,
-            make_trail=True,
-        )
+        self.wheel = cylinder(pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0), axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),radius=radius,length=1,color=color.red,opacity=0.5,make_trail=True)
 
-        spoke1 = curve(
-            pos=[vec(0, 0, 0), vec(radius, 0, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke1 = curve(pos=[vec(0, 0, 0), vec(radius, 0, 0)],color=color.black,radius=5)
 
-        spoke2 = curve(
-            pos=[vec(0, 0, 0), vec(0, radius, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke2 = curve(pos=[vec(0, 0, 0), vec(0, radius, 0)],color=color.black,radius=5)
 
-        spoke3 = curve(
-            pos=[vec(0, 0, 0), vec(-radius, 0, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke3 = curve(pos=[vec(0, 0, 0), vec(-radius, 0, 0)],color=color.black,radius=5)
 
-        spoke4 = curve(
-            pos=[vec(0, 0, 0), vec(0, -radius, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke4 = curve(pos=[vec(0, 0, 0), vec(0, -radius, 0)],color=color.black,radius=5)
 
         self.spokes = [spoke1, spoke2, spoke3, spoke4]
 
@@ -183,11 +131,7 @@ class Wheel:
 
     def update_position(self, theta):
         for spoke in self.spokes:
-            spoke.rotate(
-                angle=-theta,
-                axis=vec(0, 0, 1),
-                origin=vec(0, 0, 0),
-            )
+            spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
 
     def calculate_angular_frequency(self):
         """
@@ -222,34 +166,17 @@ class Simulation:
         self.previous_theta = 0
         self.small_angle = True
         self.pole = Pole()
-        self.spring = Spring(
-            length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-            radius=30,
-            spr_wheel_dist=120,
-            spr_const=2,
-        )  # use single spring for now
+        self.spring = Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)  # use single spring for now
         self.spring_arr = [self.spring]
 
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-        self.ang_pos_graph = graph(
-            title="Angular Position vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Position (rad)",
-        )
+        self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)")
         self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(
-            title="Angular Velocity vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Velocity (rad/s)",
-        )
+        self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)")
         self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(
-            title="Angular Acceleration vs Time",
-            xtitle="Time (s)",
-            ytitle="Angular Acceleration (rad/s^2)",
-        )
+        self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
         self.ang_acc_curve = gcurve(color=color.orange)
 
         self.inputs = []
@@ -269,16 +196,8 @@ class Simulation:
                 while self.pause:
                     sleep(0.5)
                 angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
-                angular_velocity = (
-                    -theta_amplitude
-                    * self.angular_frequency
-                    * sin(self.angular_frequency * time_step)
-                )
-                angular_acceleration = (
-                    -theta_amplitude
-                    * pow(self.angular_frequency, 2)
-                    * cos(self.angular_frequency * time_step)
-                )
+                angular_velocity = (-theta_amplitude* self.angular_frequency* sin(self.angular_frequency * time_step))
+                angular_acceleration = (-theta_amplitude* pow(self.angular_frequency, 2)* cos(self.angular_frequency * time_step))
                 # print(angular_pos)
                 delta_theta = angular_pos - self.previous_theta
                 self.previous_theta = angular_pos
@@ -290,9 +209,7 @@ class Simulation:
                 # self.ang_pos_graph.select()
                 self.ang_pos_curve.plot(time_step, angular_pos)
                 self.ang_vel_curve.plot(time_step, angular_velocity)
-                self.ang_acc_curve.plot(
-                    time_step, angular_acceleration
-                )  # fix this calculation later
+                self.ang_acc_curve.plot(time_step, angular_acceleration)  # fix this calculation later
 
                 sleep(0.05)
                 self.wheel.time += 0.05
@@ -313,11 +230,12 @@ class Simulation:
         SCENE.userpan = False
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
+    
         while not self.run:
-            # for input in self.inputs:
-            # input.visible = False
-            # print(self.previous_theta)
-            self.inputs = []
+            for input in self.inputs:
+                input.visible = False
+                input.delete()
+                self.inputs.remove(input)
 
             SCENE.caption = ""
             self.menu()
@@ -350,12 +268,7 @@ class Simulation:
             self.previous_theta = 0
             self.small_angle_approx = True
             self.pole = Pole()
-            self.spring = Spring(
-                length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,
-                radius=30,
-                spr_wheel_dist=120,
-                spr_const=2,
-            )  # use single spring for now
+            self.spring = Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)  # use single spring for now
             self.spring_arr = [self.spring]
 
             self.ang_pos_graph.delete()
@@ -382,9 +295,7 @@ class Simulation:
             # print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
-        self.inputs.append(
-            checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
-        )
+        self.inputs.append(checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle"))
 
         SCENE.append_to_caption("\n\n")
         ### ANGULAR DISPLACEMENT SLIDER ###
@@ -399,17 +310,7 @@ class Simulation:
             self.wheel.change_config(evt=evt, theta=new_value)
 
         SCENE.append_to_caption("Angular Displacement: ")
-        self.inputs.append(
-            slider(
-                bind=d_theta_bind,
-                min=radians(-30) if self.small_angle else radians(-180),
-                value=self.previous_theta,
-                max=radians(30) if self.small_angle else radians(180),
-                step=radians(5),
-                length=200,
-                id="d_theta",
-            )
-        )
+        self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
         d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
 
         ### MASS SLIDER ###
@@ -418,17 +319,7 @@ class Simulation:
             self.wheel.change_config(evt=evt)  # cleanup in future
 
         SCENE.append_to_caption("Wheel Mass: ")
-        self.inputs.append(
-            slider(
-                bind=mass_bind,
-                min=5,
-                value=self.wheel.mass,
-                max=30,
-                step=0.5,
-                length=200,
-                id="mass",
-            )
-        )
+        self.inputs.append(slider(bind=mass_bind,min=5,value=self.wheel.mass,max=30,step=0.5,length=200,id="mass"))
         mass_text = wtext(text=str(self.wheel.mass) + " kg\n")
 
         ### WHEEL RADIUS SLIDER ###
@@ -438,17 +329,7 @@ class Simulation:
             self.spring.change_config(evt=evt)
 
         SCENE.append_to_caption("Wheel Radius: ")
-        self.inputs.append(
-            slider(
-                bind=radius_bind,
-                min=50,
-                value=self.wheel.wheel.radius,
-                max=300,
-                step=1,
-                length=200,
-                id="radius",
-            )
-        )
+        self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
         radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
 
         ### SPRING CONSTANT SLIDER ###
@@ -457,17 +338,7 @@ class Simulation:
             self.spring.change_config(evt=evt)
 
         SCENE.append_to_caption("Spring Constant: ")
-        self.inputs.append(
-            slider(
-                bind=spr_const_bind,
-                min=0.5,
-                max=5,
-                value=self.spring.spr_const,
-                step=0.1,
-                length=200,
-                id="spr_const",
-            )
-        )
+        self.inputs.append(slider(bind=spr_const_bind,min=0.5,max=5,value=self.spring.spr_const,step=0.1,length=200,id="spr_const"))
         spr_const_text = wtext(text=str(self.spring.spr_const) + " N/m\n")
 
         ### SPRING-WHEEL DISTANCE SLIDER ###
@@ -476,32 +347,8 @@ class Simulation:
             self.spring.change_config(evt=evt)
 
         SCENE.append_to_caption("Spring-Wheel Distance: ")
-        self.inputs.append(
-            slider(
-                bind=spr_wheel_dist_bind,
-                min=-self.wheel.wheel.radius,
-                max=self.wheel.wheel.radius,
-                value=self.spring.spring.pos.y,
-                step=1,
-                length=200,
-                id="spr_wheel_dist",
-            )
-        )
+        self.inputs.append(slider(bind=spr_wheel_dist_bind,min=-self.wheel.wheel.radius,max=self.wheel.wheel.radius,value=self.spring.spring.pos.y,step=1,length=200,id="spr_wheel_dist"))
         spr_wheel_dist_text = wtext(text=str(self.spring.spring.pos.y) + " m\n")
-
-        ### NUMBER OF SPRINGS DROPDOWN ###
-        choices = ["1 Spring", "2 Springs", "3 Springs"]
-
-        def num_springs_bind(evt):
-            if evt.index == 1:
-                self.num_springs = 1
-            elif evt.index == 2:
-                self.num_springs = 2
-            elif evt.index == 3:
-                self.num_springs = 3
-
-        SCENE.append_to_caption("Number of Springs: ")
-        self.inputs.append(menu(bind=num_springs_bind, choices=choices))
 
 
 if __name__ == "__main__":
