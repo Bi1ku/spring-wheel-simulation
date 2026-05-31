@@ -262,6 +262,7 @@ class Simulation:
                         radius=30,
                         spr_wheel_dist=evt.value,
                         spr_const=2,
+                        small_angle = self.small_angle
                     )
                 )
             elif evt.value < len(self.spring_arr):
