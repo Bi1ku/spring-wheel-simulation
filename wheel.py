@@ -95,6 +95,16 @@ class Wheel:
         w_squared = abs(total_components / self.momentOfInertia)
         return sqrt(w_squared)
 
+    def calculate_angular_accel(self):
+
+        total_torque = 0
+
+        for spring in self.springs:
+            # print(spring.left_y_level);
+            total_torque += spring.get_torque().z
+
+        return total_torque / self.momentOfInertia
+
     # def update(self):
     # where the actual simulation goes
     # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))

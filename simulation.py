@@ -91,7 +91,22 @@ class Simulation:
                 self.wheel.time += 0.05
                 time_step += 1
         else:
-            pass
+            angular_vel = 0;
+            angular_pos = 0; 
+            time_step = 0
+            delta_time_step = 0.5
+            while self.run:
+                while self.pause:
+                    sleep(0.5)
+               
+                angular_accel = self.wheel.calculate_angular_accel() 
+                angular_vel += angular_accel * delta_time_step
+                angular_disp = angular_vel * delta_time_step
+                angular_pos += angular_disp
+                print(angular_accel)
+
+                time_step += delta_time_step
+               
 
     def setup(self):
         SCENE.background = color.white
