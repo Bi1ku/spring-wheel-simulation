@@ -11,6 +11,7 @@ class Simulation:
         self.pause = False
         self.previous_theta = 0
         self.small_angle = True
+        self.small_angle_disabled = False
         self.pole = Pole()
         self.spring_arr = [
             Spring(
@@ -171,6 +172,7 @@ class Simulation:
             self.pause = False
             self.previous_theta = 0
             self.small_angle = True
+            self.small_angle_disabled = False
             self.pole = Pole()
             self.spring_arr = [
                 Spring(
@@ -202,6 +204,7 @@ class Simulation:
             self.small_angle = evt.checked
             for spring in self.spring_arr:
                 spring.change_config(evt=evt)
+            self.small_angle_disabled = True
             # print("Sim: ")
             # print(self.small_angle)
 
@@ -209,6 +212,8 @@ class Simulation:
         self.inputs.append(
             checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
         )
+
+        self.inputs[3].disabled = self.small_angle_disabled # disabling checkbox
 
         SCENE.append_to_caption("\n\n")
         ### ANGULAR DISPLACEMENT SLIDER ###
