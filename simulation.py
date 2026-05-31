@@ -94,7 +94,7 @@ class Simulation:
             angular_vel = 0;
             angular_pos = 0; 
             time_step = 0
-            delta_time_step = 0.5
+            delta_time_step = 0.05
             while self.run:
                 while self.pause:
                     sleep(0.5)
@@ -103,8 +103,18 @@ class Simulation:
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
-                print(angular_accel)
+                #print(angular_accel)
 
+                self.wheel.update_position(angular_disp)
+                for spring in self.spring_arr:
+                    spring.update_position(angular_disp)
+                
+                self.ang_pos_curve.plot(time_step, angular_pos)
+                self.ang_vel_curve.plot(time_step, angular_vel)
+                self.ang_acc_curve.plot(time_step, angular_accel)
+                
+                sleep(0.1)
+                self.wheel.time += 0.05
                 time_step += delta_time_step
                
 
