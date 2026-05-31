@@ -196,7 +196,15 @@ class Simulation:
             self.pause = not self.pause
 
         self.inputs.append(button(bind=bind_pause, text="Pause/Unpause Simulation"))
+        
+        SCENE.append_to_caption("\n\n")
 
+        ## DRAW OBJECT BUTTON ###
+        def bind_draw(_):
+            pass 
+
+        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object"))
+        
         SCENE.append_to_caption("\n\n")
 
         # SMALL ANGLE APPROX CHECKBOX
@@ -213,7 +221,7 @@ class Simulation:
             checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
         )
 
-        self.inputs[3].disabled = self.small_angle_disabled # disabling checkbox
+        self.inputs[4].disabled = self.small_angle_disabled # disabling checkbox
 
         SCENE.append_to_caption("\n\n")
         ### ANGULAR DISPLACEMENT SLIDER ###
