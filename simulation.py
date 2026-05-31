@@ -188,6 +188,25 @@ class Simulation:
             self.ang_acc_graph.delete()
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
+            self.ang_pos_graph = graph(
+                title="Angular Position vs Time",
+                xtitle="Time (s)",
+                ytitle="Angular Position (rad)",
+            )
+            self.ang_pos_curve = gcurve(color=color.blue)
+            self.ang_vel_graph = graph(
+                title="Angular Velocity vs Time",
+                xtitle="Time (s)",
+                ytitle="Angular Velocity (rad/s)",
+            )
+            self.ang_vel_curve = gcurve(color=color.green)
+            self.ang_acc_graph = graph(
+                title="Angular Acceleration vs Time",
+                xtitle="Time (s)",
+                ytitle="Angular Acceleration (rad/s^2)",
+            )
+            self.ang_acc_curve = gcurve(color=color.orange)
+
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
         SCENE.append_to_caption("   ")
 
