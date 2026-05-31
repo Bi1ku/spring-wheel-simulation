@@ -2,45 +2,22 @@ from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 
 
+
 class Wheel:
     def __init__(self, radius, mass, springs):
         self.springs = springs
         self.mass = mass
         self.time = 0.0
 
-        self.wheel = cylinder(
-            pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),
-            axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),
-            radius=radius,
-            length=1,
-            color=color.red,
-            opacity=0.5,
-            make_trail=True,
-        )
+        self.wheel = cylinder(pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),radius=radius,length=1,color=color.red,opacity=0.5,make_trail=True)
 
-        spoke1 = curve(
-            pos=[vec(0, 0, 0), vec(radius, 0, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke1 = curve(pos=[vec(0, 0, 0), vec(radius, 0, 0)],color=color.black,radius=5)
 
-        spoke2 = curve(
-            pos=[vec(0, 0, 0), vec(0, radius, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke2 = curve(pos=[vec(0, 0, 0), vec(0, radius, 0)],color=color.black,radius=5)
 
-        spoke3 = curve(
-            pos=[vec(0, 0, 0), vec(-radius, 0, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke3 = curve(pos=[vec(0, 0, 0), vec(-radius, 0, 0)],color=color.black,radius=5)
 
-        spoke4 = curve(
-            pos=[vec(0, 0, 0), vec(0, -radius, 0)],
-            color=color.black,
-            radius=5,
-        )
+        spoke4 = curve(pos=[vec(0, 0, 0), vec(0, -radius, 0)],color=color.black,radius=5)
 
         self.spokes = [spoke1, spoke2, spoke3, spoke4]
 
@@ -69,11 +46,7 @@ class Wheel:
 
     def update_position(self, theta):
         for spoke in self.spokes:
-            spoke.rotate(
-                angle=-theta,
-                axis=vec(0, 0, 1),
-                origin=vec(0, 0, 0),
-            )
+            spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
 
     def calculate_angular_frequency(self):
         """

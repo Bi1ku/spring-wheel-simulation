@@ -18,14 +18,7 @@ class Spring:
         self.radius = radius
 
         # Spring length is the strecthed length, not the natural length
-        self.spring = helix(
-            pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
-            axis=self.axis,
-            color=color.cyan,
-            radius=radius,
-            length=(SPRING_STRETCHED_START_LENGTH),
-            coils=length / radius,
-        )
+        self.spring = helix(pos=vec(SPRING_LEFT_X, self.left_y_level, 0),axis=self.axis,color=color.cyan,radius=radius,length=(SPRING_STRETCHED_START_LENGTH),coils=length / radius)
 
         #self.lever = helix(
         #         pos=vec(0,0,0),
@@ -69,14 +62,10 @@ class Spring:
         if self.small_angle:
             if self.spring.pos.y < 0:
                 self.spring.length += -theta * self.lever_arm_length
-                self.lever_arm = rotate(
-                    self.lever_arm, angle=-theta, axis=vector(0, 0, 1)
-                )
+                self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
             else:
                 self.spring.length += theta * self.lever_arm_length
-                self.lever_arm = rotate(
-                    self.lever_arm, angle=-theta, axis=vector(0, 0, 1)
-                )
+                self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
             
             # self.arrow.visible = False
             # if self.spring.length < self.length:
@@ -87,14 +76,7 @@ class Spring:
             self.lever_arm = rotate(self.lever_arm, angle=-theta, axis=vector(0, 0, 1))
             self.axis = self.lever_arm - self.spring.pos
             self.spring.visible = False
-            self.spring = helix(
-                pos=vec(SPRING_LEFT_X, self.left_y_level, 0),
-                axis=self.axis,
-                color=color.cyan,
-                radius=self.radius,
-                length=(mag(self.axis)),
-                coils=self.length / self.radius,
-            )
+            self.spring = helix(pos=vec(SPRING_LEFT_X, self.left_y_level, 0),axis=self.axis,color=color.cyan,radius=self.radius,length=(mag(self.axis)),coils=self.length / self.radius)
         #self.lever.visible = False
         #self.lever = helix(
         #         pos=vec(0, 0, 0),
@@ -108,22 +90,14 @@ class Spring:
 
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
-            return cross(
-                (self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm
-            )
+            return cross((self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm)
         elif self.spring.length > self.length:
-            return cross(
-                -1 * ((self.spr_const * self.lever_arm_length) * self.axis),
-                self.lever_arm,
-            )
+            return cross(-1 * ((self.spr_const * self.lever_arm_length) * self.axis),self.lever_arm)
         else:
             return vec(0, 0, 0)
 
     def get_torque(self):
-        return cross(
-            -1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),
-            self.lever_arm,
-        )
+        return cross(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),self.lever_arm)
 
     # def update(self):
     # where actual simulation goes
