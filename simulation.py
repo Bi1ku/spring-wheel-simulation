@@ -202,6 +202,7 @@ class Simulation:
             self.inputs.append(button(bind=bind_draw_reset, text="Undo Last Point"))
 
         SCENE.append_to_caption("\n\n")
+ 
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -212,11 +213,13 @@ class Simulation:
             # print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
-        self.inputs.append(checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle"))
+        self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
+        self.inputs.append(self.small_angle_checkbox);
 
-        self.inputs[4].disabled = self.small_angle_disabled # disabling checkbox
+        self.small_angle_checkbox.disabled = self.small_angle_disabled # disabling checkbox
 
-        SCENE.append_to_caption("\n\n")
+        SCENE.append_to_caption("\n\n") 
+
         ### ANGULAR DISPLACEMENT SLIDER ###
 
         def d_theta_bind(evt):
