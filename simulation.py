@@ -95,6 +95,7 @@ class Simulation:
     def add_custom_point(self):
         if self.custom_points == [] or self.custom_points[-1] != SCENE.mouse.pos:
             self.custom_points.append(SCENE.mouse.pos)
+            print(self.custom_points)
 
     def setup(self):
         SCENE.background = color.white
@@ -193,6 +194,11 @@ class Simulation:
                 pass # do nothing if you can't create closed object
                 print("can't finish object")
             else:
+                two_d_points = []
+                for point in self.custom_points:
+                    two_d_points.append([point.x, point.y])
+
+                shapes.points(pos=two_d_points)
                 self.draw_object = False
         
         if self.draw_object:
@@ -202,7 +208,6 @@ class Simulation:
         ### DRAW RESET BUTTON ###
         def bind_draw_undo(_):
             if len(self.custom_points) > 1:
-                print("removing last point")
                 self.custom_points.pop()
             #print("test")
         
