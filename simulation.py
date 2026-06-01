@@ -198,7 +198,8 @@ class Simulation:
                 for point in self.custom_points:
                     two_d_points.append([point.x, point.y])
 
-                shapes.points(pos=two_d_points)
+                shape = shapes.points(pos=two_d_points)
+                extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
                 self.draw_object = False
         
         if self.draw_object:
