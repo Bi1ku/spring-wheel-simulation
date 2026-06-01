@@ -186,20 +186,27 @@ class Simulation:
         self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
         SCENE.append_to_caption("   ")
 
-        ### DRAW REMOVE BUTTON ###
-        def bind_finish(_):
-            pass
+        ### DRAW FINISH BUTTON ###
+        def bind_draw_finish(_):
+            if len(self.custom_points) < 3:
+                pass # do nothing if you can't create closed object
+                print("can't finish object")
+            else:
+                self.draw_object = False
         
         if self.draw_object:
-            self.inputs.append(button(bind=bind_finish, text="Finish Custom Object"))
+            self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
         SCENE.append_to_caption("   ")
         ### DRAW RESET BUTTON ###
-        def bind_draw_reset(_):
-            pass
+        def bind_draw_undo(_):
+            if len(self.custom_points) > 1:
+                print("removing last point")
+                self.custom_points.pop()
+            #print("test")
         
         if self.draw_object:
-            self.inputs.append(button(bind=bind_draw_reset, text="Undo Last Point"))
+            self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
 
         SCENE.append_to_caption("\n\n")
  
