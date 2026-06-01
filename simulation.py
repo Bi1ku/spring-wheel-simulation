@@ -92,6 +92,9 @@ class Simulation:
                 time_step += delta_time_step
                
 
+    def add_custom_point(self):
+        self.custom_points.append(SCENE.mouse().pos)
+
     def setup(self):
         SCENE.background = color.white
 
@@ -106,6 +109,9 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
+            if self.draw_object:
+                SCENE.bind('click', self.add_custom_point)
+            
             # for input in self.inputs:
             # input.visible = False
             # print(self.previous_theta)
@@ -149,7 +155,6 @@ class Simulation:
             self.draw_object = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
-            
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
@@ -176,26 +181,35 @@ class Simulation:
 
         ## DRAW OBJECT BUTTON ###
         def bind_draw(_):
-            pass 
+            self.draw_object = True
 
-        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object"))
-        
+        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
         SCENE.append_to_caption("   ")
 
-        ### DRAW REMOVE BUTTON ###
-        def bind_remove(_):
-            pass
-
-        self.inputs.append(button(bind=bind_remove, text="Remove Custom Object"))
+        ### DRAW FINISH BUTTON ###
+        def bind_draw_finish(_):
+            if len(self.custom_points) < 3:
+                pass # do nothing if you can't create closed object
+                print("can't finish object")
+            else:
+                self.draw_object = False
+        
+        if self.draw_object:
+            self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
         SCENE.append_to_caption("   ")
         ### DRAW RESET BUTTON ###
-        def bind_draw_reset(_):
-            pass
-
-        self.inputs.append(button(bind=bind_draw_reset, text="Reset Custom Object"))
+        def bind_draw_undo(_):
+            if len(self.custom_points) > 1:
+                print("removing last point")
+                self.custom_points.pop()
+            #print("test")
+        
+        if self.draw_object:
+            self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
 
         SCENE.append_to_caption("\n\n")
+ 
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -206,11 +220,13 @@ class Simulation:
             # print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
-        self.inputs.append(checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle"))
+        self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
+        self.inputs.append(self.small_angle_checkbox);
 
-        self.inputs[4].disabled = self.small_angle_disabled # disabling checkbox
+        self.small_angle_checkbox.disabled = self.small_angle_disabled # disabling checkbox
 
-        SCENE.append_to_caption("\n\n")
+        SCENE.append_to_caption("\n\n") 
+
         ### ANGULAR DISPLACEMENT SLIDER ###
 
         def d_theta_bind(evt):
