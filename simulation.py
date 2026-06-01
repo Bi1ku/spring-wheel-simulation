@@ -15,7 +15,7 @@ class Simulation:
         self.draw_object = False
         self.pole = Pole()
         self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
-        self.custom_points = []
+        self.custom_points_pos = []
 
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
@@ -93,9 +93,11 @@ class Simulation:
                
 
     def add_custom_point(self):
-        if self.custom_points == [] or self.custom_points[-1] != SCENE.mouse.pos:
-            self.custom_points.append(SCENE.mouse.pos)
-            print(self.custom_points)
+        if self.draw_object: 
+            if self.custom_points_pos == [] or self.custom_points_pos[-1] != SCENE.mouse.pos:
+                self.custom_points_pos.append(SCENE.mouse.pos)
+            self.custom_points = points(pos = self.custom_points_pos, color = color.orange)
+        #print(self.custom_points_pos)
 
     def setup(self):
         SCENE.background = color.white
@@ -111,8 +113,7 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            if self.draw_object:
-                SCENE.bind('click', self.add_custom_point)
+            SCENE.bind('click', self.add_custom_point)
             
             # for input in self.inputs:
             # input.visible = False
@@ -190,15 +191,18 @@ class Simulation:
 
         ### DRAW FINISH BUTTON ###
         def bind_draw_finish(_):
-            if len(self.custom_points) < 3:
+            if len(self.custom_points_pos) < 3:
                 pass # do nothing if you can't create closed object
                 print("can't finish object")
             else:
+                print("creating custom object")
                 two_d_points = []
-                for point in self.custom_points:
+                for point in self.custom_points_pos:
                     two_d_points.append([point.x, point.y])
-
-                shapes.points(pos=two_d_points)
+                
+                self.custom_points.visible = False
+                print(self.custom_points.visible)
+                self.custom_shape = shapes.points(pos=two_d_points)
                 self.draw_object = False
         
         if self.draw_object:
@@ -207,8 +211,8 @@ class Simulation:
         SCENE.append_to_caption("   ")
         ### DRAW RESET BUTTON ###
         def bind_draw_undo(_):
-            if len(self.custom_points) > 1:
-                self.custom_points.pop()
+            if len(self.custom_points_pos) > 1:
+                self.custom_points_pos.pop()
             #print("test")
         
         if self.draw_object:
