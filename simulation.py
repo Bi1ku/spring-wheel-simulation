@@ -93,7 +93,8 @@ class Simulation:
                
 
     def add_custom_point(self):
-        self.custom_points.append(SCENE.mouse().pos)
+        if self.custom_points == [] or self.custom_points[-1] != SCENE.mouse.pos:
+            self.custom_points.append(SCENE.mouse.pos)
 
     def setup(self):
         SCENE.background = color.white
