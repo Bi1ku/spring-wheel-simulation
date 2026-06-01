@@ -95,6 +95,7 @@ class Simulation:
     def add_custom_point(self):
         if self.custom_points == [] or self.custom_points[-1] != SCENE.mouse.pos:
             self.custom_points.append(SCENE.mouse.pos)
+            sphere(pos=SCENE.mouse.pos, radius=12.5, color=color.black)
             print(self.custom_points)
 
     def setup(self):
