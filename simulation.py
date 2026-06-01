@@ -12,6 +12,7 @@ class Simulation:
         self.previous_theta = 0
         self.small_angle = True
         self.small_angle_disabled = False
+        self.draw_object = False
         self.pole = Pole()
         self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
 
@@ -144,6 +145,7 @@ class Simulation:
             self.previous_theta = 0
             self.small_angle = True
             self.small_angle_disabled = False
+            self.draw_object = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
             
@@ -178,6 +180,18 @@ class Simulation:
         self.inputs.append(button(bind=bind_draw, text="Draw Custom Object"))
         
         SCENE.append_to_caption("\n\n")
+
+        ### DRAW REMOVE BUTTONT ###
+        def bind_remove(_):
+            pass
+
+        self.inputs.append(button(bind=bind_remove, text="Remove Custom Object"))
+
+        ### DRAW RESET BUTTON ###
+        def bind_draw_reset(_):
+            pass
+
+        self.inputs.append(button(bind=bind_draw_reset, text="Reset Custom Object"))
 
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
