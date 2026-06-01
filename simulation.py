@@ -92,6 +92,9 @@ class Simulation:
                 time_step += delta_time_step
                
 
+    def add_custom_point(self):
+        self.custom_points.append(SCENE.mouse().pos)
+
     def setup(self):
         SCENE.background = color.white
 
@@ -106,6 +109,9 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
+            if self.draw_object:
+                SCENE.bind('click', self.add_custom_point)
+            
             # for input in self.inputs:
             # input.visible = False
             # print(self.previous_theta)
@@ -149,7 +155,6 @@ class Simulation:
             self.draw_object = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
-            
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
@@ -176,24 +181,25 @@ class Simulation:
 
         ## DRAW OBJECT BUTTON ###
         def bind_draw(_):
-            pass 
+            self.draw_object = True
 
-        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object"))
-        
+        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
         SCENE.append_to_caption("   ")
 
         ### DRAW REMOVE BUTTON ###
-        def bind_remove(_):
+        def bind_finish(_):
             pass
-
-        self.inputs.append(button(bind=bind_remove, text="Remove Custom Object"))
+        
+        if self.draw_object:
+            self.inputs.append(button(bind=bind_finish, text="Finish Custom Object"))
 
         SCENE.append_to_caption("   ")
         ### DRAW RESET BUTTON ###
         def bind_draw_reset(_):
             pass
-
-        self.inputs.append(button(bind=bind_draw_reset, text="Reset Custom Object"))
+        
+        if self.draw_object:
+            self.inputs.append(button(bind=bind_draw_reset, text="Undo Last Point"))
 
         SCENE.append_to_caption("\n\n")
         # SMALL ANGLE APPROX CHECKBOX
