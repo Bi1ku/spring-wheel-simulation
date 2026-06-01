@@ -215,7 +215,7 @@ class Simulation:
             SCENE.append_to_caption("   ")
         ### DRAW UNDO BUTTON ###
         def bind_draw_undo(_):
-            if len(self.custom_points) > 1:
+            if len(self.custom_points) > 0:
                 self.custom_points[-1].visible = False
                 self.custom_points[-1].delete()
                 self.custom_points.pop()
