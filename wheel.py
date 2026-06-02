@@ -34,18 +34,18 @@ class Wheel:
 
         if self.extrusion is not None:
             for i in range(len(self.points)):
-                if (i == len(self.points) - 2):
-                    left_sum += self.points[i][0] * self.points[i + 1][1]
-                    right_sum += self.points[i + 1][0] * self.points[i][1]
-                else:
+                if i == len(self.points) - 1:
                     left_sum += self.points[i][0] * self.points[0][1]
                     right_sum += self.points[0][0] * self.points[i][1]
+                else:
+                    left_sum += self.points[i][0] * self.points[i + 1][1]
+                    right_sum += self.points[i + 1][0] * self.points[i][1]
 
         return 0.5 * abs(left_sum - right_sum)
     
     def calculate_com(self):
         # for two dimensional shapes, centroid is the center of mass
-        # use a new formula for weighted centroid of 2D polygon
+        # use a new formula for weighted centroid of 2D polygon w/ shoelace formula
 
         x_sum = 0
         y_sum = 0
@@ -54,7 +54,9 @@ class Wheel:
                 x_sum += (self.points[i][0] + self.points[i + 1][0]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
                 y_sum += (self.points[i][1] + self.points[i + 1][1]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
         
-        return vec(x_sum / (6 * self.calculate_area()), y_sum / (6 * self.calculate_area()), 0)
+        area = self.calculate_area()
+        sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.green)
+        return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
 
 
     def calculateMomentOfInertia(self):
@@ -63,6 +65,7 @@ class Wheel:
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
             print(self.calculate_area())
+            print(self.calculate_com())
             self.mass = evt.value
 
         elif evt.id == "radius" and not self.extrusion:
