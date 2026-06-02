@@ -213,6 +213,7 @@ class Simulation:
 
                 shape = shapes.points(pos=two_d_points)
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+                self.wheel.points = two_d_points
                 self.wheel.extrusion = extrude 
                 self.draw = False
         

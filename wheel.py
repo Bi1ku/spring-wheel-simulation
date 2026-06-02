@@ -4,7 +4,8 @@ from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 
 
 class Wheel:
-    def __init__(self, radius, mass, springs, extrusion=None):
+    def __init__(self, radius, mass, springs, extrusion=None, points=[]):
+        self.points = points
         self.extrusion = extrusion
         self.springs = springs
         self.mass = mass
@@ -26,11 +27,28 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
+    def calculate_area(self):
+        # using shoelace formula
+        left_sum = 0
+        right_sum = 0
+
+        if self.extrusion is not None:
+            for i in range(len(self.points)):
+                if (i == len(self.points) - 2):
+                    left_sum += self.points[i][0] * self.points[i + 1][1]
+                    right_sum += self.points[i + 1][0] * self.points[i][1]
+                else:
+                    left_sum += self.points[i][0] * self.points[0][1]
+                    right_sum += self.points[0][0] * self.points[i][1]
+
+        return 0.5 * abs(left_sum - right_sum)
+
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
+            print(self.calculate_area())
             self.mass = evt.value
 
         elif evt.id == "radius" and not self.extrusion:
