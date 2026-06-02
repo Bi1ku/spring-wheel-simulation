@@ -1,11 +1,10 @@
 from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 
-
-
 class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None):
         self.extrusion = extrusion
+        self.extrusion_mode = (extrusion == None)
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -26,6 +25,10 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
+    def add_extrusion(self, extrusion):
+        self.extrusion = extrusion
+        self.extrusion_mode = True
+
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
@@ -44,7 +47,7 @@ class Wheel:
             self.update_position(theta)
 
         self.calculateMomentOfInertia()
-
+    
     def update_position(self, theta):
         for spoke in self.spokes:
             spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
