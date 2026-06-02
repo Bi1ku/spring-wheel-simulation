@@ -12,10 +12,11 @@ class Simulation:
         self.previous_theta = 0
         self.small_angle = True
         self.small_angle_disabled = False
-        self.draw_object = False
+        self.draw = False
+        self.custom_object = False
         self.pole = Pole()
         self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
-        self.custom_points_pos = []
+        self.custom_points = []
 
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
@@ -93,11 +94,9 @@ class Simulation:
                
 
     def add_custom_point(self):
-        if self.draw_object: 
-            if self.custom_points_pos == [] or self.custom_points_pos[-1] != SCENE.mouse.pos:
-                self.custom_points_pos.append(SCENE.mouse.pos)
-            self.custom_points = points(pos = self.custom_points_pos, color = color.orange)
-        #print(self.custom_points_pos)
+        if self.custom_points == [] or vec(self.custom_points[-1].pos.x, self.custom_points[-1].pos.y, 0) != SCENE.mouse.pos:
+            self.custom_points.append(sphere(pos=SCENE.mouse.pos, radius=12.5, color=color.black))
+            print(SCENE.mouse.pos)
 
     def setup(self):
         SCENE.background = color.white
@@ -113,7 +112,8 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            SCENE.bind('click', self.add_custom_point)
+            if self.draw:
+                SCENE.bind('click', self.add_custom_point)
             
             # for input in self.inputs:
             # input.visible = False
@@ -152,10 +152,13 @@ class Simulation:
 
             self.run = False
             self.pause = False
+            self.custom_points = []
+            self.custom_object = False
+            self.draw = False
             self.previous_theta = 0
             self.small_angle = True
             self.small_angle_disabled = False
-            self.draw_object = False
+            self.draw = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
 
@@ -183,43 +186,63 @@ class Simulation:
         SCENE.append_to_caption("\n\n")
 
         ## DRAW OBJECT BUTTON ###
-        def bind_draw(_):
-            self.draw_object = True
+        if not (self.draw or self.custom_object):
+            def bind_draw(_):
+                self.draw = True
 
-        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
-        SCENE.append_to_caption("   ")
+            self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
+            SCENE.append_to_caption("   ")
 
         ### DRAW FINISH BUTTON ###
         def bind_draw_finish(_):
-            if len(self.custom_points_pos) < 3:
+            if len(self.custom_points) < 3:
                 pass # do nothing if you can't create closed object
                 print("can't finish object")
             else:
-                print("creating custom object")
+                self.custom_object = True
                 two_d_points = []
-                for point in self.custom_points_pos:
-                    two_d_points.append([point.x, point.y])
-                
-                self.custom_points.visible = False
-                print(self.custom_points.visible)
-                self.custom_shape = shapes.points(pos=two_d_points)
-                self.draw_object = False
+                for point in self.custom_points:
+                    two_d_points.append([point.pos.x, point.pos.y])
+                    point.visible = False
+
+                shape = shapes.points(pos=two_d_points)
+                extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+                self.draw = False
         
-        if self.draw_object:
+        if self.draw:
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
-        SCENE.append_to_caption("   ")
-        ### DRAW RESET BUTTON ###
+        if not self.custom_object:
+            SCENE.append_to_caption("   ")
+        ### DRAW UNDO BUTTON ###
         def bind_draw_undo(_):
-            if len(self.custom_points_pos) > 1:
-                self.custom_points_pos.pop()
+            if len(self.custom_points) > 0:
+                self.custom_points[-1].visible = False
+                self.custom_points[-1].delete()
+                self.custom_points.pop()
+
             #print("test")
         
-        if self.draw_object:
+        if self.draw:
             self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
 
-        SCENE.append_to_caption("\n\n")
+
+        if not self.custom_object:
+            SCENE.append_to_caption("   ")
+        ### STOP DRAW BUTTON ###
+        if self.draw:
+            def bind_draw_stop(_):
+                self.draw = False
+                self.custom_object = False
+                self.custom_points = []
+                for item in SCENE.objects:
+                    if type(item) == sphere:
+                        item.visible = False
+
+            self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
  
+        if not self.custom_object:
+            SCENE.append_to_caption("\n\n")
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -264,15 +287,16 @@ class Simulation:
         mass_text = wtext(text=str(self.wheel.mass) + " kg\n")
 
         ### WHEEL RADIUS SLIDER ###
-        def radius_bind(evt):
-            radius_text.text = str(evt.value) + " m\n"
-            self.wheel.change_config(evt=evt)  # cleanup in future
-            for spring in self.spring_arr:
-                spring.change_config(evt=evt)
-
-        SCENE.append_to_caption("Wheel Radius: ")
-        self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
-        radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
+        if not (self.draw or self.custom_object):
+            def radius_bind(evt):
+                radius_text.text = str(evt.value) + " m\n"
+                self.wheel.change_config(evt=evt)  # cleanup in future
+                for spring in self.spring_arr:
+                    spring.change_config(evt=evt)
+    
+            SCENE.append_to_caption("Wheel Radius: ")
+            self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
+            radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
 
         ### NUMBER OF SPRINGS DROPDOWN ###
         def num_springs_bind(evt):
