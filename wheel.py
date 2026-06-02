@@ -41,20 +41,23 @@ class Wheel:
                     left_sum += self.points[i][0] * self.points[i + 1][1]
                     right_sum += self.points[i + 1][0] * self.points[i][1]
 
-        return 0.5 * abs(left_sum - right_sum)
+        return (0.5 * abs(left_sum - right_sum), 0.5 * (left_sum - right_sum))
     
     def calculate_com(self):
         # for two dimensional shapes, centroid is the center of mass
-        # use a new formula for weighted centroid of 2D polygon w/ shoelace formula
+        # use a new formula for centroid of 2D polygon w/ shoelace 
 
         x_sum = 0
         y_sum = 0
         for i in range(len(self.points)):
-            if (i == len(self.points) - 2):
+            if i == len(self.points) - 1:
+                x_sum += (self.points[i][0] + self.points[0][0]) * (self.points[i][0] * self.points[0][1] - self.points[0][0] * self.points[i][1])
+                y_sum += (self.points[i][1] + self.points[0][1]) * (self.points[i][0] * self.points[0][1] - self.points[0][0] * self.points[i][1])
+            else:
                 x_sum += (self.points[i][0] + self.points[i + 1][0]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
                 y_sum += (self.points[i][1] + self.points[i + 1][1]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
         
-        area = self.calculate_area()
+        area = self.calculate_area()[1] # signed area
         sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.green)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
 
