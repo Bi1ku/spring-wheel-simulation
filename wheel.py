@@ -4,7 +4,8 @@ from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 
 
 class Wheel:
-    def __init__(self, radius, mass, springs):
+    def __init__(self, radius, mass, springs, extrusion=None):
+        self.extrusion = extrusion
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -32,7 +33,7 @@ class Wheel:
         if evt.id == "mass":
             self.mass = evt.value
 
-        elif evt.id == "radius":
+        elif evt.id == "radius" and not self.extrusion:
             self.wheel.radius = evt.value
             self.spokes[0].modify(1, pos=vec(evt.value, 0, 0))
             self.spokes[1].modify(1, pos=vec(0, evt.value, 0))
