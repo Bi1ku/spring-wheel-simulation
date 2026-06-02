@@ -34,12 +34,9 @@ class Wheel:
 
         if self.extrusion is not None:
             for i in range(len(self.points)):
-                if i == len(self.points) - 1:
-                    left_sum += self.points[i][0] * self.points[0][1]
-                    right_sum += self.points[0][0] * self.points[i][1]
-                else:
-                    left_sum += self.points[i][0] * self.points[i + 1][1]
-                    right_sum += self.points[i + 1][0] * self.points[i][1]
+                j = 0 if i == len(self.points) - 1 else i + 1
+                left_sum += self.points[i][0] * self.points[j][1]
+                right_sum += self.points[j][0] * self.points[i][1]
 
         return (0.5 * abs(left_sum - right_sum), 0.5 * (left_sum - right_sum))
     
@@ -50,12 +47,9 @@ class Wheel:
         x_sum = 0
         y_sum = 0
         for i in range(len(self.points)):
-            if i == len(self.points) - 1:
-                x_sum += (self.points[i][0] + self.points[0][0]) * (self.points[i][0] * self.points[0][1] - self.points[0][0] * self.points[i][1])
-                y_sum += (self.points[i][1] + self.points[0][1]) * (self.points[i][0] * self.points[0][1] - self.points[0][0] * self.points[i][1])
-            else:
-                x_sum += (self.points[i][0] + self.points[i + 1][0]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
-                y_sum += (self.points[i][1] + self.points[i + 1][1]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
+            j = 0 if i == len(self.points) - 1 else i + 1
+            x_sum += (self.points[i][0] + self.points[j][0]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
+            y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
         area = self.calculate_area()[1] # signed area
         sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.green)
