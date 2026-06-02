@@ -1,4 +1,5 @@
 from vpython import *
+
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
@@ -203,6 +204,11 @@ class Simulation:
                 two_d_points = []
                 for point in self.custom_points:
                     two_d_points.append([point.pos.x, point.pos.y])
+                    point.visible = False
+
+                self.wheel.wheel.visible = False
+                for spoke in self.wheel.spokes:
+                    spoke.visible = False
 
                 shape = shapes.points(pos=two_d_points)
                 extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
@@ -229,15 +235,14 @@ class Simulation:
         if not self.custom_object:
             SCENE.append_to_caption("   ")
         ### STOP DRAW BUTTON ###
-        if self.draw:
-            def bind_draw_stop(_):
+        def bind_draw_stop(_):
                 self.draw = False
                 self.custom_object = False
+                for point in self.custom_points:
+                    point.visible = False
                 self.custom_points = []
-                for item in SCENE.objects:
-                    if type(item) == sphere:
-                        item.visible = False
-
+       
+        if self.draw:
             self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
  
         if not self.custom_object:
