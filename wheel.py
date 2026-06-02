@@ -42,6 +42,20 @@ class Wheel:
                     right_sum += self.points[0][0] * self.points[i][1]
 
         return 0.5 * abs(left_sum - right_sum)
+    
+    def calculate_com(self):
+        # for two dimensional shapes, centroid is the center of mass
+        # use a new formula for weighted centroid of 2D polygon
+
+        x_sum = 0
+        y_sum = 0
+        for i in range(len(self.points)):
+            if (i == len(self.points) - 2):
+                x_sum += (self.points[i][0] + self.points[i + 1][0]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
+                y_sum += (self.points[i][1] + self.points[i + 1][1]) * (self.points[i][0] * self.points[i + 1][1] - self.points[i + 1][0] * self.points[i][1])
+        
+        return vec(x_sum / (6 * self.calculate_area()), y_sum / (6 * self.calculate_area()), 0)
+
 
     def calculateMomentOfInertia(self):
         self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
