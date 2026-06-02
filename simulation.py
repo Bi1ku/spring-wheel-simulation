@@ -212,8 +212,8 @@ class Simulation:
                     spoke.visible = False
 
                 shape = shapes.points(pos=two_d_points)
-                extrusion = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
-                self.wheel.extrusion = extrusion
+                extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+                self.wheel.extrusion = extrude 
                 self.draw = False
         
         if self.draw:
