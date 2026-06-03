@@ -127,13 +127,17 @@ class Simulation:
 
             SCENE.caption = ""
             self.menu()
-            for spring in self.spring_arr:
-                if abs(spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                    if spring.spring.pos.y < 0:
-                        spring.spring.pos.y = -self.wheel.wheel.radius
-                    else:
-                        spring.spring.pos.y = self.wheel.wheel.radius
-                sleep(1)
+            if not self.wheel.extrusion_mode:
+                for spring in self.spring_arr:
+                    if abs(spring.spring.pos.y) > abs(self.wheel.wheel.radius):
+                        if spring.spring.pos.y < 0:
+                            spring.spring.pos.y = -self.wheel.wheel.radius
+                        else:
+                            spring.spring.pos.y = self.wheel.wheel.radius
+                    sleep(0.5)
+            else:
+                
+                    sleep(0.5)
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
@@ -213,8 +217,7 @@ class Simulation:
 
                 shape = shapes.points(pos=two_d_points)
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
-                self.wheel.points = two_d_points
-                self.wheel.add_extrusion(extrude)
+                self.wheel.add_extrusion(extrude, two_d_points)
                 self.draw = False
         
         if self.draw:
