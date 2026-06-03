@@ -1,5 +1,6 @@
 from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
+import math
 
 
 
@@ -80,9 +81,14 @@ class Wheel:
             # find the area moment of inertia about of the z-axis (sum)
             # use parallel-axis theorem and com (centroid) to find the moment of inertia about the center of mass or some other point
 
+            Ix = self.calculate_area_inertia_x()
+            Iy = self.calculate_area_inertia_y()
+            Iz = Ix + Iy
 
-            density = self.mass / self.calculate_area()[0]
-            pass
+            com = self.calculate_com()
+            dist_to_com = math.dist((0, 0), (com.x, com.y))
+
+            self.momentofInertia = Iz - self.mass * dist_to_com ** 2
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
