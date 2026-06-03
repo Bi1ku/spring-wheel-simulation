@@ -55,11 +55,12 @@ class Wheel:
             x_sum += (self.points[i][0] + self.points[j][0]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
             y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
-        area = self.calculate_area()[1] # signed areai
+        area = self.calculate_area()[1] # signed area
         self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
+        print(self.points)
         # use collarary to shoelace formula for moment of inertia of 2D polygon
         sum = 0
         for i in range(len(self.points)):
@@ -85,19 +86,20 @@ class Wheel:
 
             Ix = self.calculate_area_inertia_x()
             Iy = self.calculate_area_inertia_y()
+            print(Ix, Iy)
             Iz = Ix + Iy
 
             com = self.calculate_com()
             dist_to_com = math.dist((0, 0), (com.x, com.y))
 
             self.momentofInertia = Iz - self.mass * dist_to_com ** 2
+            print(self.momentofInertia)
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+            print(self.momentOfInertia)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
-            print(self.calculate_area())
-            print(self.calculate_com())
             self.mass = evt.value
 
         elif evt.id == "radius" and not self.extrusion:
