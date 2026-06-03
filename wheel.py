@@ -43,6 +43,7 @@ class Wheel:
     def calculate_com(self):
         # for two dimensional shapes, centroid is the center of mass
         # use a new formula for centroid of 2D polygon w/ shoelace 
+        # can use this later in parallel axis theorem
 
         x_sum = 0
         y_sum = 0
@@ -55,9 +56,16 @@ class Wheel:
         sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.green)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
 
-
     def calculateMomentOfInertia(self):
-        self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+        if self.extrusion is not None:
+            # Calculate area moment of inertia for the shape about the x-axis
+            # Calculate area moment of inertia for the shape about the y-axis
+            # Using those, find the area moment of inertia about of the z-axis
+            # Use parallel-axis theorem and com (centroid) to find the moment of inertia about the center of mass or some other point
+            density = self.mass / self.calculate_area()[0]
+            pass
+        else:
+            self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
