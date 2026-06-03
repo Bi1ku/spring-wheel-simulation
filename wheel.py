@@ -2,12 +2,11 @@ from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
 import math
 
-
-
 class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
         self.points = points
         self.extrusion = extrusion
+        self.extrusion_mode = (extrusion == None)
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -28,13 +27,16 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
+    def add_extrusion(self, extrusion):
+        self.extrusion = extrusion
+        self.extrusion_mode = True
+
     def calculate_area(self):
         # using shoelace formula
         left_sum = 0
         right_sum = 0
 
-        if self.extrusion is not None:
-            for i in range(len(self.points)):
+        for i in range(len(self.points)):
                 j = 0 if i == len(self.points) - 1 else i + 1
                 left_sum += self.points[i][0] * self.points[j][1]
                 right_sum += self.points[j][0] * self.points[i][1]
@@ -53,8 +55,8 @@ class Wheel:
             x_sum += (self.points[i][0] + self.points[j][0]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
             y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
-        area = self.calculate_area()[1] # signed area
-        sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.green)
+        area = self.calculate_area()[1] # signed areai
+        self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
@@ -109,7 +111,7 @@ class Wheel:
             self.update_position(theta)
 
         self.calculateMomentOfInertia()
-
+    
     def update_position(self, theta):
         for spoke in self.spokes:
             spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
