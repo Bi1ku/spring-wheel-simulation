@@ -14,7 +14,6 @@ class Simulation:
         self.angular_displace_mode = False
         self.previous_theta = 0
         self.small_angle = True
-        self.small_angle_disabled = False
         self.draw = False
         self.custom_object = False
         self.pole = Pole()
@@ -203,7 +202,7 @@ class Simulation:
         SCENE.append_to_caption("\n\n")
 
         ## DRAW OBJECT BUTTON ###
-        if not (self.draw or self.custom_object):
+        if self.preset_mode and not (self.draw or self.custom_object):
             def bind_draw(_):
                 self.draw = True
 
@@ -269,7 +268,6 @@ class Simulation:
             self.small_angle = evt.checked
             for spring in self.spring_arr:
                 spring.change_config(evt=evt)
-            self.small_angle_disabled = True
             # print("Sim: ")
             # print(self.small_angle)
         
@@ -278,7 +276,6 @@ class Simulation:
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
             self.inputs.append(self.small_angle_checkbox);
 
-            self.small_angle_checkbox.disabled = self.small_angle_disabled # disabling checkbox
             SCENE.append_to_caption("\n\n") 
 
         ### ANGULAR DISPLACEMENT SLIDER ###
