@@ -58,12 +58,10 @@ class Wheel:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
                 delta_y = slope * (-1 * first_point[0])
                 point_one = first_point[1] + delta_y
-
             elif first_point[0] < 0 and second_point[0] > 0:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
                 delta_y = slope * (-1 * second_point[0])
                 point_two = second_point[1] + delta_y
-        
         return [max(point_one, point_two), min(point_one, point_two)]
 
     def calculate_area(self):

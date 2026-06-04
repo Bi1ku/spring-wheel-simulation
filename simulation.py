@@ -132,21 +132,17 @@ class Simulation:
             for spring in self.spring_arr:
                 if not self.custom_object:
                         if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
-                            spring.spring.pos.y = -self.wheel.wheel.radius
+                            spring.change_spr_wheel_dist(-self.wheel.wheel.radius)
                         elif spring.spring.pos.y > self.wheel.wheel.radius:
-                            spring.spring.pos.y = self.wheel.wheel.radius
+                            spring.change_spr_wheel_dist(self.wheel.wheel.radius)
                 else:
                     extremas = self.wheel.get_init_axis_line_extremas()
                     max_val = extremas[0]
                     min_val = extremas[1]
                     if spring.spring.pos.y > max_val:
-                        print("high")
-                        spring.spring.pos.y = max_val
-                        print(spring.spring.pos.y)
+                        spring.change_spr_wheel_dist(max_val)
                     elif spring.spring.pos.y < min_val:
-                        print("low")
-                        spring.spring.pos.y = min_val
-                        print(spring.spring.pos.y)
+                        spring.change_spr_wheel_dist(max_val)
             sleep(0.5)
 
     def menu(self):
