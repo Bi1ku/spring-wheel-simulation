@@ -1,5 +1,5 @@
+Wev VPython 3.2
 from vpython import *
-import math
 
 SCENE = canvas(title="Wheel and Spring Simulation", width=800, height=600)
 ROD_X = -scene.width + 50
@@ -9,6 +9,9 @@ WHEEL_CENTER_X = 0
 WHEEL_CENTER_Y = 0
 NUM_SPRINGS = 1
 SPRING_STRETCHED_START_LENGTH = WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)
+
+def dist(p1, p2):
+    return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 20)
 
 class Pole:
     def __init__(self):
@@ -204,7 +207,7 @@ class Wheel:
             area = self.calculate_area()[0]
             com = self.calculate_com()
 
-            dist_to_com = math.dist((0, 0), (com.x, com.y))
+            dist_to_com = dist((0, 0), (com.x, com.y))
             J_com = J - area * dist_to_com ** 2
 
             self.momentofInertia = (self.mass / area) * J_com

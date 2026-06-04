@@ -1,6 +1,6 @@
 from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
-import math
+from utils import dist
 
 class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
@@ -91,7 +91,7 @@ class Wheel:
             area = self.calculate_area()[0]
             com = self.calculate_com()
 
-            dist_to_com = math.dist((0, 0), (com.x, com.y))
+            dist_to_com = dist((0, 0), (com.x, com.y))
             J_com = J - area * dist_to_com ** 2
 
             self.momentofInertia = (self.mass / area) * J_com
