@@ -35,14 +35,22 @@ class Wheel:
 
     def get_init_com_line_max_y(self):
         for i in range(len(self.points) - 2):
-            first_x = points[i][0]
-            second_x = points[i + 1][0]
-            
-            if first_x > self.com.pos.x and second_x < self.com.pos.x:
+            first_point = self.points[i]
+            second_point = self.points[i + 1]
+    
+            if first_point[0] > self.com.pos.x and second_point[0] < self.com.pos.x:
+                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                delta_y = slope * (first_point[0] - self.com.pos.x)
+                return first_point[1] + delta_y
+               
+    def get_init_com_line_min_y(self):
+        for i in range (len(self.points) - 2):
+            first_point = self.points[i]
+            second_point = self.points[i + 1]
+
+            if first_point[0] < self.com.pos.x and second_point[0] > self.com.pos.x:
                 pass
-            elif first_x < self.com.pos.x and second_x > self.com.pos.x:
-                pass
-            
+
     def calculate_area(self):
         # using shoelace formula
         left_sum = 0
