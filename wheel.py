@@ -156,9 +156,13 @@ class Wheel:
         self.calculateMomentOfInertia()
      
     def update_position(self, theta):
-        for spoke in self.spokes:
-            spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
+        if self.extrusion_mode: 
+            self.extrusion.rotate(axis=vec(0,0,1), angle = -theta, origin = vec(0,0,0))
+        else:
+            for spoke in self.spokes:
+                spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
 
+    
     def calculate_angular_frequency(self):
         """
         let me cook here

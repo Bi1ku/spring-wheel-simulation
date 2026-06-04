@@ -137,10 +137,8 @@ class Simulation:
                             spring.spring.pos.y = self.wheel.wheel.radius
                 else:
                     if spring.spring.pos.y > self.wheel.get_init_axis_line_max_y():
-                        print("too high")
                         spring.spring.pos.y = self.wheel.get_init_axis_line_max_y()
                     elif spring.spring.pos.y < self.wheel.get_init_axis_line_min_y():
-                        print("too low")
                         spring.spring.pos.y = self.wheel.get_init_axis_line_min_y()
             sleep(0.5)
 
@@ -289,10 +287,10 @@ class Simulation:
         
         def d_theta_bind(evt):
             d_theta_text.text = str(evt.value) + " rad\n"
-
+            
             new_value = evt.value - self.previous_theta
             self.previous_theta = evt.value
-
+            
             for spring in self.spring_arr:
                 spring.change_config(evt=evt, theta=new_value)
 
