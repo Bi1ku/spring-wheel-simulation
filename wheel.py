@@ -47,23 +47,27 @@ class Wheel:
         self.points = translated_points
         self.calculate_com()
     
-    def get_init_com_line_max_y(self):
+    def get_init_axis_line_max_y(self):
         for i in range(len(self.points) - 2):
             first_point = self.points[i]
             second_point = self.points[i + 1]
     
-            if first_point[0] > self.com.pos.x and second_point[0] < self.com.pos.x:
+            if first_point[0] > 0 and second_point[0] < 0:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (first_point[0] - self.com.pos.x)
+                delta_y = slope * (-1 * first_point[0])
+        
                 return first_point[1] + delta_y
                
-    def get_init_com_line_min_y(self):
+    def get_init_axis_line_min_y(self):
         for i in range (len(self.points) - 2):
             first_point = self.points[i]
             second_point = self.points[i + 1]
 
-            if first_point[0] < self.com.pos.x and second_point[0] > self.com.pos.x:
-                pass
+            if first_point[0] < 0 and second_point[0] > 0:
+                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                delta_y = slope  * (-1 * second_point[0])
+        
+                return second_point[1] + delta_y
 
     def calculate_area(self):
         # using shoelace formula
