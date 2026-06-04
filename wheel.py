@@ -20,6 +20,9 @@ class Wheel:
         spoke3 = curve(pos=[vec(0, 0, 0), vec(-radius, 0, 0)],color=color.black,radius=5)
 
         spoke4 = curve(pos=[vec(0, 0, 0), vec(0, -radius, 0)],color=color.black,radius=5)
+        
+        self.com = sphere(pos=vec(0, 0, 0), radius=10, color=color.black)
+        self.com.visible = False
 
         self.spokes = [spoke1, spoke2, spoke3, spoke4]
 
@@ -33,6 +36,17 @@ class Wheel:
         self.extrusion_mode = True
         self.calculate_com()
 
+    def move_com_to_axis(self):
+        translated_points = []
+        for point in self.points:
+            translated_points.append([point[0] - self.com.pos.x, point[1] - self.com.pos.y])
+        shape = shapes.points(pos=translated_points)
+        extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+        self.extrusion.visible = False
+        self.extrusion = extrude
+        self.points = translated_points
+        self.calculate_com()
+    
     def get_init_com_line_max_y(self):
         for i in range(len(self.points) - 2):
             first_point = self.points[i]
@@ -76,6 +90,7 @@ class Wheel:
             y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
         area = self.calculate_area()[1] # signed area
+        self.com.visible = False
         self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     

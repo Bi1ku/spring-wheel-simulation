@@ -153,7 +153,7 @@ class Simulation:
             def bind_preset(_):
                self.preset_mode = False
                self.angular_displace_mode = True
-
+ 
             self.inputs.append(button(bind=bind_preset, text="Set Presets"))
 
         SCENE.append_to_caption("   ")
@@ -229,6 +229,8 @@ class Simulation:
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
                 self.wheel.add_extrusion(extrude, two_d_points)
                 self.draw = False
+                sleep(2)
+                self.wheel.move_com_to_axis()
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
