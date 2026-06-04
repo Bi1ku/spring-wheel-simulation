@@ -34,29 +34,29 @@ class Spring:
         if "spr_const" in evt.id and changed_num == num:
             self.spr_const = evt.value
         elif "spr_wheel_dist" in evt.id and changed_num == num:
-            # figure out how to get this to work mid-simulation
-            self.spring.pos = vec(SPRING_LEFT_X, evt.value, 0)
-            lever_arm_prev_x = self.lever_arm.x
-            #print(lever_arm_prev_x)
-            self.lever_arm = vec(lever_arm_prev_x, evt.value, 0)
-            self.lever_arm_length = abs(evt.value)
-            self.left_y_level = evt.value
-            #self.lever.visible = False
-            #self.lever = helix(
-            #     pos=vec(0, 0, 0),
-            #     axis=self.lever_arm,
-            #     color=color.cyan,
-            #     radius=self.radius,
-            #     length=(self.lever_arm_length),
-            #     coils=self.length / self.radius,
-            # )
-
+            self.change_spr_wheel_dist(evt.value)
         elif "d_theta" in evt.id:
             self.update_position(theta)
         elif evt.id == "small_angle":
             self.small_angle = evt.checked
             # print("Spring: ")
             # print(self.small_angle)
+
+    def change_spr_wheel_dist(self, value):
+        self.spring.pos = vec(SPRING_LEFT_X, value, 0)
+        #print(lever_arm_prev_x)
+        self.lever_arm = vec(0, value, 0)
+        self.lever_arm_length = abs(value)
+        self.left_y_level = value
+        #self.lever.visible = False
+        #self.lever = helix(
+        #         pos=vec(0, 0, 0),
+        #         axis=self.lever_arm,
+        #         color=color.cyan,
+        #         radius=self.radius,
+        #         length=(self.lever_arm_length),
+        #         coils=self.length / self.radius,
+        #)
 
     def update_position(self, theta):
         if self.small_angle:

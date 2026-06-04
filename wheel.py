@@ -20,6 +20,9 @@ class Wheel:
         spoke3 = curve(pos=[vec(0, 0, 0), vec(-radius, 0, 0)],color=color.black,radius=5)
 
         spoke4 = curve(pos=[vec(0, 0, 0), vec(0, -radius, 0)],color=color.black,radius=5)
+        
+        self.com = sphere(pos=vec(0, 0, 0), radius=10, color=color.black)
+        self.com.visible = False
 
         self.spokes = [spoke1, spoke2, spoke3, spoke4]
 
@@ -33,23 +36,33 @@ class Wheel:
         self.extrusion_mode = True
         self.calculate_com()
 
-    def get_init_com_line_max_y(self):
+    def move_com_to_axis(self):
+        translated_points = []
+        for point in self.points:
+            translated_points.append([point[0] - self.com.pos.x, point[1] - self.com.pos.y])
+        shape = shapes.points(pos=translated_points)
+        extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+        self.extrusion.visible = False
+        self.extrusion = extrude
+        self.points = translated_points
+        self.calculate_com()
+    
+    def get_init_axis_line_extremas(self):
+        point_one = 0
+        point_two = 0
         for i in range(len(self.points) - 2):
             first_point = self.points[i]
             second_point = self.points[i + 1]
     
-            if first_point[0] > self.com.pos.x and second_point[0] < self.com.pos.x:
+            if first_point[0] > 0 and second_point[0] < 0:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (first_point[0] - self.com.pos.x)
-                return first_point[1] + delta_y
-               
-    def get_init_com_line_min_y(self):
-        for i in range (len(self.points) - 2):
-            first_point = self.points[i]
-            second_point = self.points[i + 1]
-
-            if first_point[0] < self.com.pos.x and second_point[0] > self.com.pos.x:
-                pass
+                delta_y = slope * (-1 * first_point[0])
+                point_one = first_point[1] + delta_y
+            elif first_point[0] < 0 and second_point[0] > 0:
+                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                delta_y = slope * (-1 * second_point[0])
+                point_two = second_point[1] + delta_y
+        return [max(point_one, point_two), min(point_one, point_two)]
 
     def calculate_area(self):
         # using shoelace formula
@@ -76,6 +89,7 @@ class Wheel:
             y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
         area = self.calculate_area()[1] # signed area
+        self.com.visible = False
         self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
@@ -137,9 +151,13 @@ class Wheel:
         self.calculateMomentOfInertia()
      
     def update_position(self, theta):
-        for spoke in self.spokes:
-            spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
+        if self.extrusion_mode: 
+            self.extrusion.rotate(axis=vec(0,0,1), angle = -theta, origin = vec(0,0,0))
+        else:
+            for spoke in self.spokes:
+                spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
 
+    
     def calculate_angular_frequency(self):
         """
         let me cook here

@@ -115,6 +115,7 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
+            #print("setup")
             if self.draw:
                 SCENE.bind('click', self.add_custom_point)
             
@@ -129,14 +130,19 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             for spring in self.spring_arr:
-                if abs(spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                    if spring.spring.pos.y < 0:
-                        if self.wheel.extrusion_mode:
-                            pass
-                        else:
-                            spring.spring.pos.y = -self.wheel.wheel.radius
-                    else:
-                        spring.spring.pos.y = self.wheel.wheel.radius
+                if not self.custom_object:
+                        if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
+                            spring.change_spr_wheel_dist(-self.wheel.wheel.radius)
+                        elif spring.spring.pos.y > self.wheel.wheel.radius:
+                            spring.change_spr_wheel_dist(self.wheel.wheel.radius)
+                else:
+                    extremas = self.wheel.get_init_axis_line_extremas()
+                    max_val = extremas[0]
+                    min_val = extremas[1]
+                    if spring.spring.pos.y > max_val:
+                        spring.change_spr_wheel_dist(max_val)
+                    elif spring.spring.pos.y < min_val:
+                        spring.change_spr_wheel_dist(max_val)
             sleep(0.5)
 
     def menu(self):
@@ -153,7 +159,7 @@ class Simulation:
             def bind_preset(_):
                self.preset_mode = False
                self.angular_displace_mode = True
-
+ 
             self.inputs.append(button(bind=bind_preset, text="Set Presets"))
 
         SCENE.append_to_caption("   ")
@@ -229,6 +235,7 @@ class Simulation:
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
                 self.wheel.add_extrusion(extrude, two_d_points)
                 self.draw = False
+                self.wheel.move_com_to_axis()
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
@@ -263,7 +270,7 @@ class Simulation:
  
         if not self.custom_object:
             SCENE.append_to_caption("\n\n")
-        # SMALL ANGLE APPROX CHECKBOX
+       # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
             for spring in self.spring_arr:
@@ -282,10 +289,10 @@ class Simulation:
         
         def d_theta_bind(evt):
             d_theta_text.text = str(evt.value) + " rad\n"
-
+            
             new_value = evt.value - self.previous_theta
             self.previous_theta = evt.value
-
+            
             for spring in self.spring_arr:
                 spring.change_config(evt=evt, theta=new_value)
 
@@ -357,7 +364,13 @@ class Simulation:
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance:")
-                self.inputs.append(slider(bind=spr_wheel_dist_bind,min=-self.wheel.wheel.radius,max=self.wheel.wheel.radius,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_{i + 1}"))
+                min_val = -self.wheel.wheel.radius 
+                max_val = self.wheel.wheel.radius
+                if self.custom_object:
+                    extremas = self.wheel.get_init_axis_line_extremas()
+                    min_val = extremas[1]
+                    max_val = extremas[0]
+                self.inputs.append(slider(bind=spr_wheel_dist_bind,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_{i + 1}"))
                 self.spr_wheel_dist_texts.append(wtext(text=str(self.spring_arr[i].spring.pos.y) + " m\n"))
 
         SCENE.append_to_caption("\n\n\n\n\n\n\n")
