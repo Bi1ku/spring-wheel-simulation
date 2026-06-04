@@ -27,9 +27,29 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
-    def add_extrusion(self, extrusion):
+    def add_extrusion(self, extrusion, points):
         self.extrusion = extrusion
+        self.points = points
         self.extrusion_mode = True
+        self.calculate_com()
+
+    def get_init_com_line_max_y(self):
+        for i in range(len(self.points) - 2):
+            first_point = self.points[i]
+            second_point = self.points[i + 1]
+    
+            if first_point[0] > self.com.pos.x and second_point[0] < self.com.pos.x:
+                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                delta_y = slope * (first_point[0] - self.com.pos.x)
+                return first_point[1] + delta_y
+               
+    def get_init_com_line_min_y(self):
+        for i in range (len(self.points) - 2):
+            first_point = self.points[i]
+            second_point = self.points[i + 1]
+
+            if first_point[0] < self.com.pos.x and second_point[0] > self.com.pos.x:
+                pass
 
     def calculate_area(self):
         # using shoelace formula
@@ -115,7 +135,7 @@ class Wheel:
             self.update_position(theta)
 
         self.calculateMomentOfInertia()
-    
+     
     def update_position(self, theta):
         for spoke in self.spokes:
             spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
