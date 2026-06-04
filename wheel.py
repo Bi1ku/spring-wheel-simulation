@@ -1,6 +1,6 @@
 from vpython import *
 from constants import WHEEL_CENTER_X, WHEEL_CENTER_Y
-import math
+from utils import dist
 
 class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
@@ -67,18 +67,19 @@ class Wheel:
             x_sum += (self.points[i][0] + self.points[j][0]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
             y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
         
-        area = self.calculate_area()[1] # signed areai
+        area = self.calculate_area()[1] # signed area
         self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
+        print(self.points)
         # use collarary to shoelace formula for moment of inertia of 2D polygon
         sum = 0
         for i in range(len(self.points)):
             j = 0 if i == len(self.points) - 1 else i + 1
             sum += (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]) * (self.points[i][1] ** 2 + self.points[i][1] * self.points[j][1] + self.points[j][1] ** 2)
 
-        return sum / 12
+        return abs(sum / 12)
 
     def calculate_area_inertia_y(self):
         sum = 0
@@ -86,30 +87,33 @@ class Wheel:
             j = 0 if i == len(self.points) - 1 else i + 1
             sum += (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]) * (self.points[i][0] ** 2 + self.points[i][0] * self.points[j][0] + self.points[j][0] ** 2)
 
-        return sum / 12
+        return abs(sum / 12)
 
     def calculateMomentOfInertia(self):
         if self.extrusion is not None:
             # calculate area moment of inertia for the shape about the x-axis
             # calculate area moment of inertia for the shape about the y-axis
-            # find the area moment of inertia about of the z-axis (sum)
-            # use parallel-axis theorem and com (centroid) to find the moment of inertia about the center of mass or some other point
+            # find the area moment of inertia about of the z-axis (sum, polar moment of inertia)
+            # use parallel-axis theorem and com (centroid) to find the moment of inertia about the center of mass => extrapolate for other points maybe
 
             Ix = self.calculate_area_inertia_x()
             Iy = self.calculate_area_inertia_y()
-            Iz = Ix + Iy
+            J = Ix + Iy # polar moment of inertia about origin
 
+            area = self.calculate_area()[0]
             com = self.calculate_com()
-            dist_to_com = math.dist((0, 0), (com.x, com.y))
 
-            self.momentofInertia = Iz - self.mass * dist_to_com ** 2
+            dist_to_com = dist((0, 0), (com.x, com.y))
+            J_com = J - area * dist_to_com ** 2
+
+            self.momentofInertia = (self.mass / area) * J_com
+            print(self.momentofInertia)
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+            print(self.momentOfInertia)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
-            print(self.calculate_area())
-            print(self.calculate_com())
             self.mass = evt.value
 
         elif evt.id == "radius" and not self.extrusion:

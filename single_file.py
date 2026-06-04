@@ -1,4 +1,5 @@
-Web VPython 3.2
+Wev VPython 3.2
+from vpython import *
 
 SCENE = canvas(title="Wheel and Spring Simulation", width=800, height=600)
 ROD_X = -scene.width + 50
@@ -9,11 +10,12 @@ WHEEL_CENTER_Y = 0
 NUM_SPRINGS = 1
 SPRING_STRETCHED_START_LENGTH = WHEEL_CENTER_X - (ROD_X + SPRING_LEFT_X_OFFSET)
 
+def dist(p1, p2):
+    return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 20)
 
 class Pole:
     def __init__(self):
         curve(pos=[vec(ROD_X, SCENE.height, 0), vec(ROD_X, -SCENE.height, 0)],color=color.black,radius=10,)
-
 
 class Spring:
     def __init__(self, length, radius, spr_wheel_dist, spr_const, small_angle=True):
@@ -112,14 +114,20 @@ class Spring:
     def get_torque(self):
         return cross(-1 * ((self.spr_const * (self.spring.length - self.length)) * self.axis),self.lever_arm)
 
+    # def update(self):
+    # where actual simulation goes
+    # pass
 
 class Wheel:
-    def __init__(self, radius, mass, springs):
+    def __init__(self, radius, mass, springs, extrusion=None, points=[]):
+        self.points = points
+        self.extrusion = extrusion
+        self.extrusion_mode = (extrusion == None)
         self.springs = springs
         self.mass = mass
         self.time = 0.0
 
-        self.wheel = cylinder(pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),radius=radius,length=1,color=color.red,opacity=0.5,make_trail=True)
+        self.wheel = cylinder(pos=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, 0),axis=vec(WHEEL_CENTER_X, WHEEL_CENTER_Y, -1),radius=radius,length=1,color=color.red,make_trail=True)
 
         spoke1 = curve(pos=[vec(0, 0, 0), vec(radius, 0, 0)],color=color.black,radius=5)
 
@@ -135,14 +143,84 @@ class Wheel:
 
         self.calculateMomentOfInertia()
 
+    def add_extrusion(self, extrusion):
+        self.extrusion = extrusion
+        self.extrusion_mode = True
+
+    def calculate_area(self):
+        # using shoelace formula
+        left_sum = 0
+        right_sum = 0
+
+        for i in range(len(self.points)):
+                j = 0 if i == len(self.points) - 1 else i + 1
+                left_sum += self.points[i][0] * self.points[j][1]
+                right_sum += self.points[j][0] * self.points[i][1]
+
+        return (0.5 * abs(left_sum - right_sum), 0.5 * (left_sum - right_sum))
+    
+    def calculate_com(self):
+        # for two dimensional shapes, centroid is the center of mass
+        # use a new formula for centroid of 2D polygon w/ shoelace
+        # can use this later in parallel axis theorem
+
+        x_sum = 0
+        y_sum = 0
+        for i in range(len(self.points)):
+            j = 0 if i == len(self.points) - 1 else i + 1
+            x_sum += (self.points[i][0] + self.points[j][0]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
+            y_sum += (self.points[i][1] + self.points[j][1]) * (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1])
+        
+        area = self.calculate_area()[1] # signed area
+        self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
+        return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
+    
+    def calculate_area_inertia_x(self):
+        print(self.points)
+        # use collarary to shoelace formula for moment of inertia of 2D polygon
+        sum = 0
+        for i in range(len(self.points)):
+            j = 0 if i == len(self.points) - 1 else i + 1
+            sum += (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]) * (self.points[i][1] ** 2 + self.points[i][1] * self.points[j][1] + self.points[j][1] ** 2)
+
+        return abs(sum / 12)
+
+    def calculate_area_inertia_y(self):
+        sum = 0
+        for i in range(len(self.points)):
+            j = 0 if i == len(self.points) - 1 else i + 1
+            sum += (self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]) * (self.points[i][0] ** 2 + self.points[i][0] * self.points[j][0] + self.points[j][0] ** 2)
+
+        return abs(sum / 12)
+
     def calculateMomentOfInertia(self):
-        self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+        if self.extrusion is not None:
+            # calculate area moment of inertia for the shape about the x-axis
+            # calculate area moment of inertia for the shape about the y-axis
+            # find the area moment of inertia about of the z-axis (sum, polar moment of inertia)
+            # use parallel-axis theorem and com (centroid) to find the moment of inertia about the center of mass => extrapolate for other points maybe
+
+            Ix = self.calculate_area_inertia_x()
+            Iy = self.calculate_area_inertia_y()
+            J = Ix + Iy # polar moment of inertia about origin
+
+            area = self.calculate_area()[0]
+            com = self.calculate_com()
+
+            dist_to_com = dist((0, 0), (com.x, com.y))
+            J_com = J - area * dist_to_com ** 2
+
+            self.momentofInertia = (self.mass / area) * J_com
+            print(self.momentofInertia)
+        else:
+            self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+            print(self.momentOfInertia)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
             self.mass = evt.value
 
-        elif evt.id == "radius":
+        elif evt.id == "radius" and not self.extrusion:
             self.wheel.radius = evt.value
             self.spokes[0].modify(1, pos=vec(evt.value, 0, 0))
             self.spokes[1].modify(1, pos=vec(0, evt.value, 0))
@@ -153,7 +231,7 @@ class Wheel:
             self.update_position(theta)
 
         self.calculateMomentOfInertia()
-
+    
     def update_position(self, theta):
         for spoke in self.spokes:
             spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
@@ -188,6 +266,10 @@ class Wheel:
 
         return total_torque / self.momentOfInertia
 
+    # def update(self):
+    # where the actual simulation goes
+    # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
+    # pass
 
 class Simulation:
     def __init__(self):
@@ -196,8 +278,11 @@ class Simulation:
         self.previous_theta = 0
         self.small_angle = True
         self.small_angle_disabled = False
+        self.draw = False
+        self.custom_object = False
         self.pole = Pole()
         self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
+        self.custom_points = []
 
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
@@ -274,6 +359,12 @@ class Simulation:
                 time_step += delta_time_step
                
 
+    def add_custom_point(self):
+        if self.draw and (self.custom_points == [] or vec(self.custom_points[-1].pos.x, self.custom_points[-1].pos.y, 0) != SCENE.mouse.pos):
+            print(self.draw)
+            self.custom_points.append(sphere(pos=SCENE.mouse.pos, radius=12.5, color=color.black))
+            print(SCENE.mouse.pos)
+
     def setup(self):
         SCENE.background = color.white
 
@@ -288,6 +379,9 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
+            if self.draw:
+                SCENE.bind('click', self.add_custom_point)
+            
             # for input in self.inputs:
             # input.visible = False
             # print(self.previous_theta)
@@ -325,12 +419,15 @@ class Simulation:
 
             self.run = False
             self.pause = False
+            self.custom_points = []
+            self.custom_object = False
+            self.draw = False
             self.previous_theta = 0
             self.small_angle = True
             self.small_angle_disabled = False
+            self.draw = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
-            
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
@@ -356,13 +453,68 @@ class Simulation:
         SCENE.append_to_caption("\n\n")
 
         ## DRAW OBJECT BUTTON ###
-        def bind_draw(_):
-            pass 
+        if not (self.draw or self.custom_object):
+            def bind_draw(_):
+                self.draw = True
 
-        self.inputs.append(button(bind=bind_draw, text="Draw Custom Object"))
+            self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
+            SCENE.append_to_caption("   ")
+
+        ### DRAW FINISH BUTTON ###
+        def bind_draw_finish(_):
+            if len(self.custom_points) < 3:
+                pass # do nothing if you can't create closed object
+                print("can't finish object")
+            else:
+                self.custom_object = True
+                two_d_points = []
+                for point in self.custom_points:
+                    two_d_points.append([point.pos.x, point.pos.y])
+                    point.visible = False
+
+                self.wheel.wheel.visible = False
+                for spoke in self.wheel.spokes:
+                    spoke.visible = False
+
+                shape = shapes.points(pos=two_d_points)
+                extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
+                self.wheel.points = two_d_points
+                self.wheel.add_extrusion(extrude)
+                self.draw = False
         
-        SCENE.append_to_caption("\n\n")
+        if self.draw:
+            self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
+        if not self.custom_object:
+            SCENE.append_to_caption("   ")
+        ### DRAW UNDO BUTTON ###
+        def bind_draw_undo(_):
+            if len(self.custom_points) > 0:
+                self.custom_points[-1].visible = False
+                self.custom_points[-1].delete()
+                self.custom_points.pop()
+
+            #print("test")
+        
+        if self.draw:
+            self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
+
+
+        if not self.custom_object:
+            SCENE.append_to_caption("   ")
+        ### STOP DRAW BUTTON ###
+        def bind_draw_stop(_):
+                self.draw = False
+                self.custom_object = False
+                for point in self.custom_points:
+                    point.visible = False
+                self.custom_points = []
+       
+        if self.draw:
+            self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
+ 
+        if not self.custom_object:
+            SCENE.append_to_caption("\n\n")
         # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -373,11 +525,13 @@ class Simulation:
             # print(self.small_angle)
 
         SCENE.append_to_caption("Small Angle Approximation?: ")
-        self.inputs.append(checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle"))
+        self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
+        self.inputs.append(self.small_angle_checkbox);
 
-        self.inputs[4].disabled = self.small_angle_disabled # disabling checkbox
+        self.small_angle_checkbox.disabled = self.small_angle_disabled # disabling checkbox
 
-        SCENE.append_to_caption("\n\n")
+        SCENE.append_to_caption("\n\n") 
+
         ### ANGULAR DISPLACEMENT SLIDER ###
 
         def d_theta_bind(evt):
@@ -405,15 +559,16 @@ class Simulation:
         mass_text = wtext(text=str(self.wheel.mass) + " kg\n")
 
         ### WHEEL RADIUS SLIDER ###
-        def radius_bind(evt):
-            radius_text.text = str(evt.value) + " m\n"
-            self.wheel.change_config(evt=evt)  # cleanup in future
-            for spring in self.spring_arr:
-                spring.change_config(evt=evt)
-
-        SCENE.append_to_caption("Wheel Radius: ")
-        self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
-        radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
+        if not (self.draw or self.custom_object):
+            def radius_bind(evt):
+                radius_text.text = str(evt.value) + " m\n"
+                self.wheel.change_config(evt=evt)  # cleanup in future
+                for spring in self.spring_arr:
+                    spring.change_config(evt=evt)
+    
+            SCENE.append_to_caption("Wheel Radius: ")
+            self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
+            radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
 
         ### NUMBER OF SPRINGS DROPDOWN ###
         def num_springs_bind(evt):
