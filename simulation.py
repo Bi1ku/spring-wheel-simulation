@@ -115,6 +115,7 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
+            #print("setup")
             if self.draw:
                 SCENE.bind('click', self.add_custom_point)
             
@@ -129,14 +130,18 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             for spring in self.spring_arr:
-                if abs(spring.spring.pos.y) > abs(self.wheel.wheel.radius):
-                    if spring.spring.pos.y < 0:
-                        if self.wheel.extrusion_mode:
-                            pass
-                        else:
+                if not self.custom_object:
+                        if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
                             spring.spring.pos.y = -self.wheel.wheel.radius
-                    else:
-                        spring.spring.pos.y = self.wheel.wheel.radius
+                        elif spring.spring.pos.y > self.wheel.wheel.radius:
+                            spring.spring.pos.y = self.wheel.wheel.radius
+                else:
+                    if spring.spring.pos.y > self.wheel.get_init_axis_line_max_y():
+                        print("too high")
+                        spring.spring.pos.y = self.wheel.get_init_axis_line_max_y()
+                    elif spring.spring.pos.y < self.wheel.get_init_axis_line_min_y():
+                        print("too low")
+                        spring.spring.pos.y = self.wheel.get_init_axis_line_min_y()
             sleep(0.5)
 
     def menu(self):
