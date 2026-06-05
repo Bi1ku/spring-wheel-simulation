@@ -94,7 +94,6 @@ class Wheel:
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
-        print(self.points)
         # use collarary to shoelace formula for moment of inertia of 2D polygon
         sum = 0
         for i in range(len(self.points)):
@@ -129,10 +128,8 @@ class Wheel:
             J_com = J - area * dist_to_com ** 2
 
             self.momentofInertia = (self.mass / area) * J_com
-            print(self.momentofInertia)
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
-            print(self.momentOfInertia)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
@@ -183,7 +180,6 @@ class Wheel:
         total_torque = 0
 
         for spring in self.springs:
-            # print(spring.left_y_level);
             total_torque += spring.get_torque().z
 
         return total_torque / self.momentOfInertia

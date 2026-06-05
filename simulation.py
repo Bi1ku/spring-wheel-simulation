@@ -32,18 +32,16 @@ class Simulation:
 
         self.inputs = []
         self.spr_wheel_dist_texts = []
+        self.spr_wheel_dist_x_texts = []
         self.spr_const_texts = []
 
     def loop(self):
-        # print(self.previous_theta)
-        # print(len(self.inputs))
         for i in range(len(self.inputs)):
             if i >= 3:  # first three is the run, reset, pause simulation buttons
                 self.inputs[i].delete()
 
         if self.small_angle:
             theta_amplitude = self.previous_theta
-            # print(theta_amplitude)
             time_step = 0
             while self.run:
                 while self.pause:
@@ -51,7 +49,6 @@ class Simulation:
                 angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
                 angular_velocity = (-theta_amplitude* self.angular_frequency* sin(self.angular_frequency * time_step))
                 angular_acceleration = (-theta_amplitude* pow(self.angular_frequency, 2)* cos(self.angular_frequency * time_step))
-                # print(angular_pos)
                 delta_theta = angular_pos - self.previous_theta
                 self.previous_theta = angular_pos
 
@@ -80,7 +77,6 @@ class Simulation:
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
-                #print(angular_accel)
 
                 self.wheel.update_position(angular_disp)
                 for spring in self.spring_arr:
@@ -97,9 +93,7 @@ class Simulation:
 
     def add_custom_point(self):
         if self.draw and (self.custom_points == [] or vec(self.custom_points[-1].pos.x, self.custom_points[-1].pos.y, 0) != SCENE.mouse.pos):
-            print(self.draw)
             self.custom_points.append(sphere(pos=SCENE.mouse.pos, radius=12.5, color=color.black))
-            print(SCENE.mouse.pos)
 
     def setup(self):
         SCENE.background = color.white
@@ -115,16 +109,13 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            #print("setup")
             if self.draw:
                 SCENE.bind('click', self.add_custom_point)
             
             # for input in self.inputs:
             # input.visible = False
-            # print(self.previous_theta)
             self.inputs = []
             #for spring in self.spring_arr:
-                # print(spring.spring.pos.y)
                 #pass
 
             SCENE.caption = ""
@@ -219,7 +210,6 @@ class Simulation:
         def bind_draw_finish(_):
             if len(self.custom_points) < 3:
                 pass # do nothing if you can't create closed object
-                print("can't finish object")
             else:
                 self.custom_object = True
                 two_d_points = []
@@ -249,7 +239,6 @@ class Simulation:
                 self.custom_points[-1].delete()
                 self.custom_points.pop()
 
-            #print("test")
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
@@ -275,8 +264,6 @@ class Simulation:
             self.small_angle = evt.checked
             for spring in self.spring_arr:
                 spring.change_config(evt=evt)
-            # print("Sim: ")
-            # print(self.small_angle)
         
         if self.preset_mode:
             SCENE.append_to_caption("Small Angle Approximation?: ")
@@ -355,22 +342,38 @@ class Simulation:
                 self.inputs.append(slider(bind=spr_const_bind,min=0.5,max=5,value=self.spring_arr[i].spr_const,step=0.1,length=200,id=f"spr_const_{i + 1}"))
                 self.spr_const_texts.append(wtext(text=str(self.spring_arr[i].spr_const) + " N/m\n"))
 
-        ### SPRING-WHEEL DISTANCE SLIDER ###
-        def spr_wheel_dist_bind(evt):
+        ### SPRING-WHEEL DISTANCE Y SLIDER ###
+        def spr_wheel_dist_bind_y(evt):
             self.spr_wheel_dist_texts[int(evt.id[-1]) - 1].text = (str(evt.value) + " m\n")
             for i in range(len(self.spring_arr)):
                 self.spring_arr[i].change_config(evt=evt, num=i + 1)
 
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
-                SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance:")
-                min_val = -self.wheel.wheel.radius 
+                SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance Y:")
+                min_val = -self.wheel.wheel.radius
                 max_val = self.wheel.wheel.radius
                 if self.custom_object:
                     extremas = self.wheel.get_init_axis_line_extremas()
                     min_val = extremas[1]
                     max_val = extremas[0]
-                self.inputs.append(slider(bind=spr_wheel_dist_bind,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_{i + 1}"))
+                self.inputs.append(slider(bind=spr_wheel_dist_bind_y,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_y_{i + 1}"))
                 self.spr_wheel_dist_texts.append(wtext(text=str(self.spring_arr[i].spring.pos.y) + " m\n"))
+
+        ### SPRING-WHEEL DISTANCE X SLIDER ###
+        def spr_wheel_dist_bind_x(evt):
+            self.spr_wheel_dist_x_texts[int(evt.id[-1]) - 1].text = (str(evt.value) + " m\n")
+
+            for i in range(len(self.spring_arr)):
+                self.spring_arr[i].change_config(evt=evt, num=i + 1)
+
+        if self.preset_mode:
+            for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance X:")
+                min_val = 100
+                max_val = 1000
+                self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=self.spring_arr[i].length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
+                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
+
 
         SCENE.append_to_caption("\n\n\n\n\n\n\n")
