@@ -54,12 +54,9 @@ class Spring:
             self.update_position(theta)
         elif evt.id == "small_angle":
             self.small_angle = evt.checked
-            # print("Spring: ")
-            # print(self.small_angle)
 
     def change_spr_wheel_dist(self, value):
         self.spring.pos = vec(SPRING_LEFT_X, value, 0)
-        #print(lever_arm_prev_x)
         self.lever_arm = vec(0, value, 0)
         self.lever_arm_length = abs(value)
         self.left_y_level = value
@@ -122,7 +119,7 @@ class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
         self.points = points
         self.extrusion = extrusion
-        self.extrusion_mode = (extrusion == None)
+        self.extrusion_mode = (extrusion != None)
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -210,7 +207,6 @@ class Wheel:
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
-        print(self.points)
         # use collarary to shoelace formula for moment of inertia of 2D polygon
         sum = 0
         for i in range(len(self.points)):
@@ -245,10 +241,8 @@ class Wheel:
             J_com = J - area * dist_to_com ** 2
 
             self.momentofInertia = (self.mass / area) * J_com
-            print(self.momentofInertia)
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
-            print(self.momentOfInertia)
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
@@ -299,7 +293,6 @@ class Wheel:
         total_torque = 0
 
         for spring in self.springs:
-            # print(spring.left_y_level);
             total_torque += spring.get_torque().z
 
         return total_torque / self.momentOfInertia
@@ -338,15 +331,12 @@ class Simulation:
         self.spr_const_texts = []
 
     def loop(self):
-        # print(self.previous_theta)
-        # print(len(self.inputs))
         for i in range(len(self.inputs)):
             if i >= 3:  # first three is the run, reset, pause simulation buttons
                 self.inputs[i].delete()
 
         if self.small_angle:
             theta_amplitude = self.previous_theta
-            # print(theta_amplitude)
             time_step = 0
             while self.run:
                 while self.pause:
@@ -354,7 +344,6 @@ class Simulation:
                 angular_pos = theta_amplitude * cos(self.angular_frequency * time_step)
                 angular_velocity = (-theta_amplitude* self.angular_frequency* sin(self.angular_frequency * time_step))
                 angular_acceleration = (-theta_amplitude* pow(self.angular_frequency, 2)* cos(self.angular_frequency * time_step))
-                # print(angular_pos)
                 delta_theta = angular_pos - self.previous_theta
                 self.previous_theta = angular_pos
 
@@ -383,7 +372,6 @@ class Simulation:
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
-                #print(angular_accel)
 
                 self.wheel.update_position(angular_disp)
                 for spring in self.spring_arr:
@@ -400,9 +388,7 @@ class Simulation:
 
     def add_custom_point(self):
         if self.draw and (self.custom_points == [] or vec(self.custom_points[-1].pos.x, self.custom_points[-1].pos.y, 0) != SCENE.mouse.pos):
-            print(self.draw)
             self.custom_points.append(sphere(pos=SCENE.mouse.pos, radius=12.5, color=color.black))
-            print(SCENE.mouse.pos)
 
     def setup(self):
         SCENE.background = color.white
@@ -418,16 +404,13 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
-            #print("setup")
             if self.draw:
                 SCENE.bind('click', self.add_custom_point)
             
             # for input in self.inputs:
             # input.visible = False
-            # print(self.previous_theta)
             self.inputs = []
             #for spring in self.spring_arr:
-                # print(spring.spring.pos.y)
                 #pass
 
             SCENE.caption = ""
@@ -522,7 +505,6 @@ class Simulation:
         def bind_draw_finish(_):
             if len(self.custom_points) < 3:
                 pass # do nothing if you can't create closed object
-                print("can't finish object")
             else:
                 self.custom_object = True
                 two_d_points = []
@@ -552,7 +534,6 @@ class Simulation:
                 self.custom_points[-1].delete()
                 self.custom_points.pop()
 
-            #print("test")
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
@@ -578,8 +559,6 @@ class Simulation:
             self.small_angle = evt.checked
             for spring in self.spring_arr:
                 spring.change_config(evt=evt)
-            # print("Sim: ")
-            # print(self.small_angle)
         
         if self.preset_mode:
             SCENE.append_to_caption("Small Angle Approximation?: ")
