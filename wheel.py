@@ -6,7 +6,7 @@ class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
         self.points = points
         self.extrusion = extrusion
-        self.extrusion_mode = (extrusion == None)
+        self.extrusion_mode = (extrusion != None)
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -149,15 +149,15 @@ class Wheel:
             self.update_position(theta)
 
         self.calculateMomentOfInertia()
-     
+
     def update_position(self, theta):
-        if self.extrusion_mode: 
+        if self.extrusion_mode:
             self.extrusion.rotate(axis=vec(0,0,1), angle = -theta, origin = vec(0,0,0))
         else:
             for spoke in self.spokes:
                 spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
 
-    
+
     def calculate_angular_frequency(self):
         """
         let me cook here
