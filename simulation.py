@@ -175,6 +175,7 @@ class Simulation:
             self.small_angle = True
             self.small_angle_disabled = False
             self.draw = False
+            self.moved_com = False
             self.pole = Pole()
             self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
 
@@ -189,6 +190,8 @@ class Simulation:
             self.ang_vel_curve = gcurve(color=color.green)
             self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
             self.ang_acc_curve = gcurve(color=color.orange)
+
+            sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
         SCENE.append_to_caption("   ")
@@ -242,7 +245,7 @@ class Simulation:
                 self.wheel.move_com_to_axis()
                 self.moved_com = True 
 
-            self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation"))
+            self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation/Attach Object to Axis of Rotation"))
             
             SCENE.append_to_caption("\n\n")
 
