@@ -35,6 +35,7 @@ class Simulation:
         self.spr_wheel_dist_texts = []
         self.spr_wheel_dist_x_texts = []
         self.spr_const_texts = []
+        self.spr_nat_len_texts = []
 
         sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
 
@@ -173,7 +174,6 @@ class Simulation:
             self.draw = False
             self.previous_theta = 0
             self.small_angle = True
-            self.small_angle_disabled = False
             self.draw = False
             self.moved_com = False
             self.pole = Pole()
@@ -359,6 +359,18 @@ class Simulation:
                 self.inputs.append(slider(bind=spr_const_bind,min=0.5,max=5,value=self.spring_arr[i].spr_const,step=0.1,length=200,id=f"spr_const_{i + 1}"))
                 self.spr_const_texts.append(wtext(text=str(self.spring_arr[i].spr_const) + " N/m\n"))
 
+        ### SPRING NATURAL LENGTH ### 
+        def spr_nat_len_bind(evt):
+            self.spr_nat_len_texts[int(evt.id[-1])].text = str(evt.value) + " m\n"
+            for i in range(len(self.spring_arr)):
+                self.spring_arr[i].change_config(evt=evt, num = i + 1)
+
+        if self.preset_mode: 
+            for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption(f"Spring {i + 1} Natural Length: ")
+                self.inputs.append(slider(bind=spr_nat_len_bind, min = 0.5 * SPRING_STRETCHED_START_LENGTH, max = 1.5 * SPRING_STRETCHED_START_LENGTH, value = self.spring_arr[i].length, step = 0.1, length = 200, id = f"spr_nat_len_{i+1}"))
+                self.spr_nat_len_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
+
         ### SPRING-WHEEL DISTANCE Y SLIDER ###
         def spr_wheel_dist_bind_y(evt):
             self.spr_wheel_dist_texts[int(evt.id[-1]) - 1].text = (str(evt.value) + " m\n")
@@ -389,8 +401,8 @@ class Simulation:
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance X:")
                 min_val = 100
                 max_val = 1000
-                self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=self.spring_arr[i].length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
-                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
+                self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
+                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].spring.length) + " m\n"))
 
 
         SCENE.append_to_caption("\n\n\n\n\n\n\n")
