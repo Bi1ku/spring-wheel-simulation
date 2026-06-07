@@ -14,6 +14,7 @@ class Simulation:
         self.angular_displace_mode = False
         self.previous_theta = 0
         self.small_angle = True
+        self.small_angle_disabled = False
         self.draw = False
         self.custom_object = False
         self.moved_com = False
@@ -174,6 +175,7 @@ class Simulation:
             self.draw = False
             self.previous_theta = 0
             self.small_angle = True
+            self.small_angle_disabled = False
             self.draw = False
             self.moved_com = False
             self.pole = Pole()
@@ -231,6 +233,8 @@ class Simulation:
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
                 self.wheel.add_extrusion(extrude, two_d_points)
                 self.draw = False
+                self.small_angle = False
+                self.small_angle_disabled = True
                 #self.wheel.move_com_to_axis()
         
         if self.draw:
@@ -285,6 +289,9 @@ class Simulation:
         if self.preset_mode:
             SCENE.append_to_caption("Small Angle Approximation?: ")
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
+            self.small_angle_checkbox.disabled = self.small_angle_disabled
+            if self.small_angle_disabled:
+                SCENE.append_to_caption("Small Angle Approx not compatible with custom object")
             self.inputs.append(self.small_angle_checkbox);
 
             SCENE.append_to_caption("\n\n") 
@@ -402,7 +409,7 @@ class Simulation:
                 min_val = 100
                 max_val = 1000
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
-                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].spring.length) + " m\n"))
+                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
 
 
         SCENE.append_to_caption("\n\n\n\n\n\n\n")
