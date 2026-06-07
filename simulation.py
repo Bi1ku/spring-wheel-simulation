@@ -39,6 +39,8 @@ class Simulation:
         self.spr_nat_len_texts = []
 
         sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
+        sphere(pos = vec(500,-400, 0), radius = 15, color = color.white * 0.5)
+        text(pos = vec(520, -410, 0), text = " - Axis of rotation", height = 30, color = color.black)
 
     def loop(self):
         for i in range(len(self.inputs)):
@@ -194,6 +196,8 @@ class Simulation:
             self.ang_acc_curve = gcurve(color=color.orange)
 
             sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
+            sphere(pos = vec(500,-400, 0), radius = 15, color = color.white * 0.5)
+            text(pos = vec(520, -410, 0), text = " - Axis of rotation", height = 30, color = color.black)
 
         self.inputs.append(button(bind=bind_reset, text="Reset Simulation"))
         SCENE.append_to_caption("   ")
@@ -235,6 +239,9 @@ class Simulation:
                 self.draw = False
                 self.small_angle = False
                 self.small_angle_disabled = True
+                sphere(pos = vec(500,-450, 0), radius = 10, color = color.black)
+                text(pos = vec(520, -460, 0), text = " - Center of Mass", height = 30, color = color.black)
+
                 #self.wheel.move_com_to_axis()
         
         if self.draw:
@@ -248,9 +255,7 @@ class Simulation:
             def bind_move_com():
                 self.wheel.move_com_to_axis()
                 self.moved_com = True 
-
             self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation/Attach Object to Axis of Rotation"))
-            
             SCENE.append_to_caption("\n\n")
 
         ### DRAW UNDO BUTTON ###
@@ -259,7 +264,6 @@ class Simulation:
                 self.custom_points[-1].visible = False
                 self.custom_points[-1].delete()
                 self.custom_points.pop()
-
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_undo, text="Undo Last Point"))
@@ -291,7 +295,7 @@ class Simulation:
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
             self.small_angle_checkbox.disabled = self.small_angle_disabled
             if self.small_angle_disabled:
-                SCENE.append_to_caption("Small Angle Approx not compatible with custom object")
+                SCENE.append_to_caption(" (Small Angle Approx set to false for custom object)")
             self.inputs.append(self.small_angle_checkbox);
 
             SCENE.append_to_caption("\n\n") 
