@@ -36,7 +36,7 @@ class Wheel:
         self.extrusion = extrusion
         self.points = points
         self.extrusion_mode = True
-        self.calculate_com() 
+        self.calculate_com()
 
     def move_com_to_axis(self):
         #print("from move com")
@@ -191,6 +191,13 @@ class Wheel:
 
         for spring in self.springs:
             total_torque += spring.get_torque().z
+
+        if not self.moved_com:
+            com_lever_arm = self.com.pos
+            fg = vec(0,-9.81 * self.mass, 0)
+            tg = cross(com_lever_arm, fg)
+            #print(tg.z)
+            total_torque += tg.z
 
         return total_torque / self.momentOfInertia
 
