@@ -36,6 +36,8 @@ class Simulation:
         self.spr_wheel_dist_x_texts = []
         self.spr_const_texts = []
 
+        sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
+
     def loop(self):
         for i in range(len(self.inputs)):
             if i >= 3:  # first three is the run, reset, pause simulation buttons
