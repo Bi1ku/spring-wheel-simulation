@@ -7,6 +7,7 @@ class Wheel:
         self.points = points
         self.extrusion = extrusion
         self.extrusion_mode = (extrusion != None)
+        self.moved_com = False
         self.springs = springs
         self.mass = mass
         self.time = 0.0
@@ -31,12 +32,14 @@ class Wheel:
         self.calculateMomentOfInertia()
 
     def add_extrusion(self, extrusion, points):
+        #print("from add extrusion")
         self.extrusion = extrusion
         self.points = points
         self.extrusion_mode = True
-        self.calculate_com()
+        self.calculate_com() 
 
     def move_com_to_axis(self):
+        #print("from move com")
         translated_points = []
         for point in self.points:
             translated_points.append([point[0] - self.com.pos.x, point[1] - self.com.pos.y])
@@ -46,6 +49,7 @@ class Wheel:
         self.extrusion = extrude
         self.points = translated_points
         self.calculate_com()
+        self.moved_com = True
     
     def get_init_axis_line_extremas(self):
         point_one = 0
@@ -77,6 +81,7 @@ class Wheel:
         return (0.5 * abs(left_sum - right_sum), 0.5 * (left_sum - right_sum))
     
     def calculate_com(self):
+        #print("calling calcualte com")
         # for two dimensional shapes, centroid is the center of mass
         # use a new formula for centroid of 2D polygon w/ shoelace
         # can use this later in parallel axis theorem
@@ -90,7 +95,8 @@ class Wheel:
         
         area = self.calculate_area()[1] # signed area
         self.com.visible = False
-        self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black)
+        self.com = sphere(pos=vec(x_sum / (6 * area), y_sum / (6 * area), 0), radius=10, color=color.black) 
+        #print(self.com.pos)
         return vec(x_sum / (6 * area), y_sum / (6 * area), 0)
     
     def calculate_area_inertia_x(self):
@@ -111,6 +117,7 @@ class Wheel:
         return abs(sum / 12)
 
     def calculateMomentOfInertia(self):
+        #print("from moment of inertia")
         if self.extrusion is not None:
             # calculate area moment of inertia for the shape about the x-axis
             # calculate area moment of inertia for the shape about the y-axis
@@ -134,6 +141,7 @@ class Wheel:
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
             self.mass = evt.value
+            self.calculateMomentOfInertia()
 
         elif evt.id == "radius" and not self.extrusion:
             self.wheel.radius = evt.value
@@ -141,19 +149,21 @@ class Wheel:
             self.spokes[1].modify(1, pos=vec(0, evt.value, 0))
             self.spokes[2].modify(1, pos=vec(-evt.value, 0, 0))
             self.spokes[3].modify(1, pos=vec(0, -evt.value, 0))
+            self.calculateMomentOfInertia()
 
         elif evt.id == "d_theta":
             self.update_position(theta)
 
-        self.calculateMomentOfInertia()
-
     def update_position(self, theta):
         if self.extrusion_mode:
             self.extrusion.rotate(axis=vec(0,0,1), angle = -theta, origin = vec(0,0,0))
+            if not self.moved_com:
+                #print("test")
+                self.com.rotate(axis=vec(0,0,1), angle = -theta, origin = vec(0,0,0))
+                #print(self.com.pos)
         else:
             for spoke in self.spokes:
                 spoke.rotate(angle=-theta,axis=vec(0, 0, 1),origin=vec(0, 0, 0))
-
 
     def calculate_angular_frequency(self):
         """

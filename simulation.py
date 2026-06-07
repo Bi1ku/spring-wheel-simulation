@@ -235,7 +235,7 @@ class Simulation:
             SCENE.append_to_caption("   ")
 
         ### MOVE C.O.M ###
-        if self.custom_object and not self.draw and not self.moved_com:
+        if self.preset_mode and self.custom_object and not self.draw and not self.moved_com:
             def bind_move_com():
                 self.wheel.move_com_to_axis()
                 self.moved_com = True 
