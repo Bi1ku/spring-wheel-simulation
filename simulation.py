@@ -16,6 +16,7 @@ class Simulation:
         self.small_angle = True
         self.draw = False
         self.custom_object = False
+        self.moved_com = False
         self.pole = Pole()
         self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
         self.custom_points = []
@@ -225,13 +226,24 @@ class Simulation:
                 extrude = extrusion(path=[vec(0, 0, 0), vec(0, 0, -1)], shape=shape, color=color.red)
                 self.wheel.add_extrusion(extrude, two_d_points)
                 self.draw = False
-                self.wheel.move_com_to_axis()
+                #self.wheel.move_com_to_axis()
         
         if self.draw:
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
         if not self.custom_object:
             SCENE.append_to_caption("   ")
+
+        ### MOVE C.O.M ###
+        if self.custom_object and not self.draw and not self.moved_com:
+            def bind_move_com():
+                self.wheel.move_com_to_axis()
+                self.moved_com = True 
+
+            self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation"))
+            
+            SCENE.append_to_caption("\n\n")
+
         ### DRAW UNDO BUTTON ###
         def bind_draw_undo(_):
             if len(self.custom_points) > 0:
