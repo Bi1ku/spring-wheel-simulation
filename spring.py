@@ -32,6 +32,9 @@ class Spring:
         changed_num = num if num == 0 else int(evt.id[-1])
         if "spr_const" in evt.id and changed_num == num:
             self.spr_const = evt.value
+        if "spr_nat_len" in evt.id and changed_num == num:
+            #print("testing nat length changer " + str(evt.value))
+            self.length = evt.value
         elif "spr_wheel_dist_y" in evt.id and changed_num == num:
             self.change_spr_wheel_dist(evt.value)
         elif "spr_wheel_dist_x" in evt.id and changed_num == num:
