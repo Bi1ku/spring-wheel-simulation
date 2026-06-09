@@ -6,7 +6,8 @@ class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
         self.points = points
         self.extrusion = extrusion
-        self.extrusion_mode = (extrusion != None)
+        self.extrusion_mode = (extrusion is not None)
+        #print(self.extrusion_mode)
         self.moved_com = False
         self.springs = springs
         self.mass = mass
@@ -38,6 +39,8 @@ class Wheel:
         self.extrusion_mode = True
         self.calculate_com()
 
+        self.calculateMomentOfInertia()
+
     def move_com_to_axis(self):
         #print("from move com")
         translated_points = []
@@ -51,22 +54,57 @@ class Wheel:
         self.calculate_com()
         self.moved_com = True
     
-    def get_init_axis_line_extremas(self):
-        point_one = 0
-        point_two = 0
-        for i in range(len(self.points) - 2):
-            first_point = self.points[i]
-            second_point = self.points[i + 1]
-    
-            if first_point[0] > 0 and second_point[0] < 0:
-                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (-1 * first_point[0])
-                point_one = first_point[1] + delta_y
-            elif first_point[0] < 0 and second_point[0] > 0:
-                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (-1 * second_point[0])
-                point_two = second_point[1] + delta_y
-        return [max(point_one, point_two), min(point_one, point_two)]
+    def get_vertical_line_extremas(self, x):
+        y_one = 0
+        y_two = 0
+        if self.extrusion_mode:
+            for i in range(len(self.points) - 2):
+                first_point = self.points[i]
+                second_point = self.points[i + 1]
+        
+                if first_point[0] > x and second_point[0] < x:
+                    slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                    delta_y = slope * (x  - first_point[0])
+                    y_one = first_point[1] + delta_y
+                elif first_point[0] < x and second_point[0] > x:
+                    slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                    delta_y = slope * (x - second_point[0])
+                    y_two = second_point[1] + delta_y
+        else:
+            # x^2 + y^2 = r^2 
+            # y^2 = r^2 - x^2 
+            y2 = pow(self.wheel.radius, 2) - pow(x, 2)
+            if y2 > 0:
+                y = sqrt(y2)
+                y_one = y
+                y_two = -y
+        return [max(y_one, y_two), min(y_one, y_two)]
+
+    def get_horizontal_line_extremas(self, y):
+        x_one = 0
+        x_two = 0
+        if self.extrusion_mode:
+            for i in range(len(self.points) - 2):
+                first_point = self.points[i]
+                second_point = self.points[i + 1]
+        
+                if first_point[1] > y and second_point[1] < y:
+                    slope = (first_point[0] - second_point[0]) / (first_point[1] - second_point[1])
+                    delta_x = slope * (y  - first_point[1])
+                    x_one = first_point[0] + delta_x
+                elif first_point[1] < y and second_point[1] > y:
+                    slope = (first_point[0] - second_point[0]) / (first_point[1] - second_point[1])
+                    delta_x = slope * (y - second_point[1])
+                    x_two = second_point[0] + delta_x
+        else:
+            # x^2 + y^2 = r^2 
+            # x^2 = r^2 - y^2 
+            x2 = pow(self.wheel.radius, 2) - pow(y, 2)
+            if x2 > 0:
+                x = sqrt(x2)
+                x_one = x
+                x_two = -x
+        return [max(x_one, x_two), min(x_one, x_two)]
 
     def calculate_area(self):
         # using shoelace formula
@@ -133,10 +171,14 @@ class Wheel:
 
             dist_to_com = dist((0, 0), (com.x, com.y))
             J_com = J - area * dist_to_com ** 2
-
-            self.momentofInertia = (self.mass / area) * J_com
+            
+            self.momentOfInertia = (self.mass / area) * J_com
+            
+            print("custom object moment: " + str(self.momentOfInertia))
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
+            print("wheel object moment: " + str(self.momentOfInertia))
+            
 
     def change_config(self, evt, theta=0):
         if evt.id == "mass":
@@ -198,7 +240,7 @@ class Wheel:
             tg = cross(com_lever_arm, fg)
             #print(tg.z)
             total_torque += tg.z
-
+        print(self.momentOfInertia)
         return total_torque / self.momentOfInertia
 
     # def update(self):

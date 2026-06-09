@@ -3,14 +3,15 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE, SPRING_STRETCHED_START_LENGTH
+from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X
 
 
 class Simulation:
     def __init__(self):
         self.run = False
         self.pause = False
-        self.preset_mode = True
+        self.small_angle_mode = True
+        self.preset_mode = False
         self.angular_displace_mode = False
         self.previous_theta = 0
         self.small_angle = True
@@ -19,7 +20,7 @@ class Simulation:
         self.custom_object = False
         self.moved_com = False
         self.pole = Pole()
-        self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]
+        self.spring_arr = [Spring(length=(SPRING_STRETCHED_START_LENGTH),radius=30,spr_wheel_dist=120,spr_const=2)]
         self.custom_points = []
 
         self.num_springs = 1
@@ -48,7 +49,7 @@ class Simulation:
                 self.inputs[i].delete()
 
         if self.small_angle:
-            theta_amplitude = self.previous_theta
+            theta_amplitude = abs(self.previous_theta)
             time_step = 0
             while self.run:
                 while self.pause:
@@ -72,6 +73,7 @@ class Simulation:
                 self.wheel.time += 0.05
                 time_step += 1
         else:
+            #print("non-small angle")
             angular_vel = 0;
             angular_pos = 0; 
             time_step = 0
@@ -81,6 +83,7 @@ class Simulation:
                     sleep(0.5)
                
                 angular_accel = self.wheel.calculate_angular_accel() 
+                #print(angular_accel)
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
@@ -114,7 +117,6 @@ class Simulation:
         SCENE.userspin = False
         SCENE.userpan = False
 
-        self.angular_frequency = self.wheel.calculate_angular_frequency()
         while not self.run:
             if self.draw:
                 SCENE.bind('click', self.add_custom_point)
@@ -128,26 +130,35 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             for spring in self.spring_arr:
-                if not self.custom_object:
-                        if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
-                            spring.change_spr_wheel_dist(-self.wheel.wheel.radius)
-                        elif spring.spring.pos.y > self.wheel.wheel.radius:
-                            spring.change_spr_wheel_dist(self.wheel.wheel.radius)
-                else:
-                    extremas = self.wheel.get_init_axis_line_extremas()
+                    #print(SPRING_LEFT_X + spring.spring.length)
+                    extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X+ spring.spring.length)
+                    
                     max_val = extremas[0]
                     min_val = extremas[1]
+                    if max_val == 0 and min_val == 0:
+                        spring.change_horizontal_spr_wheel_dist(0)
+                        extremas = self.wheel.get_vertical_line_extremas(0)
                     if spring.spring.pos.y > max_val:
-                        spring.change_spr_wheel_dist(max_val)
+                        spring.change_vertical_spr_wheel_dist(max_val)
                     elif spring.spring.pos.y < min_val:
-                        spring.change_spr_wheel_dist(max_val)
+                        spring.change_vertical_spr_wheel_dist(min_val)
             sleep(0.5)
+
+        self.angular_frequency = self.wheel.calculate_angular_frequency()
 
     def menu(self):
         SCENE.append_to_caption("\n\n")
 
         ### RUN SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
-        if self.angular_displace_mode or self.run:
+        if self.small_angle_mode:
+            def bind_set_small_angle(_):
+                self.small_angle_mode = False
+                self.preset_mode = True
+                self.small_angle_disabled = True
+                
+            self.inputs.append(button(bind=bind_set_small_angle, text="Set Small Angle Mode"))
+
+        elif self.angular_displace_mode or self.run:
             def bind_run(_):
                 self.run = True
                 self.angular_displace_mode = False
@@ -171,7 +182,8 @@ class Simulation:
             self.run = False
             self.pause = False
             self.angular_displace_mode = False
-            self.preset_mode = True
+            self.preset_mode = False
+            self.small_angle_mode = True
             self.custom_points = []
             self.custom_object = False
             self.draw = False
@@ -290,11 +302,11 @@ class Simulation:
             for spring in self.spring_arr:
                 spring.change_config(evt=evt)
         
-        if self.preset_mode:
+        if self.small_angle_mode or self.preset_mode:
             SCENE.append_to_caption("Small Angle Approximation?: ")
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
             self.small_angle_checkbox.disabled = self.small_angle_disabled
-            if self.small_angle_disabled:
+            if self.small_angle_disabled and self.custom_object:
                 SCENE.append_to_caption(" (Small Angle Approx set to false for custom object)")
             self.inputs.append(self.small_angle_checkbox);
 
@@ -344,7 +356,7 @@ class Simulation:
         ### NUMBER OF SPRINGS DROPDOWN ###
         def num_springs_bind(evt):
             if evt.value > len(self.spring_arr):
-                self.spring_arr.append(Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=evt.value,spr_const=2,small_angle = self.small_angle))
+                self.spring_arr.append(Spring(length=(SPRING_STRETCHED_START_LENGTH),radius=30,spr_wheel_dist=evt.value,spr_const=2,small_angle = self.small_angle))
             elif evt.value < len(self.spring_arr):
                 self.spring_arr[-1].spring.visible = False
                 self.spring_arr[-1].spring.delete()
@@ -391,12 +403,9 @@ class Simulation:
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance Y:")
-                min_val = -self.wheel.wheel.radius
-                max_val = self.wheel.wheel.radius
-                if self.custom_object:
-                    extremas = self.wheel.get_init_axis_line_extremas()
-                    min_val = extremas[1]
-                    max_val = extremas[0]
+                extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X + self.spring_arr[i].spring.length)
+                min_val = extremas[1]
+                max_val = extremas[0]
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_y,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_y_{i + 1}"))
                 self.spr_wheel_dist_texts.append(wtext(text=str(self.spring_arr[i].spring.pos.y) + " m\n"))
 
@@ -407,13 +416,16 @@ class Simulation:
             for i in range(len(self.spring_arr)):
                 self.spring_arr[i].change_config(evt=evt, num=i + 1)
 
-        if self.preset_mode:
+        if self.preset_mode and not self.small_angle:
             for i in range(len(self.spring_arr)):
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance X:")
-                min_val = 100
-                max_val = 1000
-                self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
-                self.spr_wheel_dist_x_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
+                extremas = self.wheel.get_horizontal_line_extremas(self.spring_arr[i].left_y_level)
+                min_val = extremas[1]
+                max_val = extremas[0]
+                #print(min_val)
+                #print(SPRING_LEFT_X + self.spring_arr[i].spring.length)
+                self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=SPRING_LEFT_X + self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
+                self.spr_wheel_dist_x_texts.append(wtext(text=str(SPRING_LEFT_X + self.spring_arr[i].spring.length) + " m\n"))
 
 
         SCENE.append_to_caption("\n\n\n\n\n\n\n")

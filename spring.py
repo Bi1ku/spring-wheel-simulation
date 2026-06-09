@@ -36,21 +36,37 @@ class Spring:
             #print("testing nat length changer " + str(evt.value))
             self.length = evt.value
         elif "spr_wheel_dist_y" in evt.id and changed_num == num:
-            self.change_spr_wheel_dist(evt.value)
+            self.change_vertical_spr_wheel_dist(evt.value)
         elif "spr_wheel_dist_x" in evt.id and changed_num == num:
-            self.length = evt.value
-            self.spring.length = evt.value
-            self.spring.coils = evt.value / self.radius
+            self.change_horizontal_spr_wheel_dist(evt.value)
         elif "d_theta" in evt.id:
             self.update_position(theta)
         elif evt.id == "small_angle":
             self.small_angle = evt.checked
 
-    def change_spr_wheel_dist(self, value):
+    def change_vertical_spr_wheel_dist(self, value):
         self.spring.pos = vec(SPRING_LEFT_X, value, 0)
-        self.lever_arm = vec(0, value, 0)
-        self.lever_arm_length = abs(value)
+        prev_x = self.lever_arm.x
+        self.lever_arm = vec(prev_x, value, 0)
+        self.lever_arm_length = sqrt(pow(prev_x, 2) + pow(value, 2))
         self.left_y_level = value
+        #self.lever.visible = False
+        #self.lever = helix(
+        #         pos=vec(0, 0, 0),
+        #         axis=self.lever_arm,
+        #         color=color.cyan,
+        #         radius=self.radius,
+        #         length=(self.lever_arm_length),
+        #         coils=self.length / self.radius,
+        #)
+
+    def change_horizontal_spr_wheel_dist(self, value):
+        prev_y = self.lever_arm.y 
+        self.lever_arm = vec(value, prev_y, 0)
+        self.lever_arm_length = sqrt(pow(value, 2) + pow(prev_y, 2))
+        prev_spring_length = self.spring.length
+        self.spring.length = SPRING_STRETCHED_START_LENGTH + value
+        self.spring.coils = self.spring.length / self.radius
         #self.lever.visible = False
         #self.lever = helix(
         #         pos=vec(0, 0, 0),
@@ -90,11 +106,12 @@ class Spring:
         #         coils=self.length / self.radius,
         #)
  
-
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
+            #print("current length less than natural length")
             return cross((self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm)
         elif self.spring.length > self.length:
+            #print("current length more than natural length")
             return cross(-1 * ((self.spr_const * self.lever_arm_length) * self.axis),self.lever_arm)
         else:
             return vec(0, 0, 0)
