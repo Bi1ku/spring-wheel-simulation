@@ -50,7 +50,7 @@ class Spring:
         self.lever_arm = vec(prev_x, value, 0)
         self.lever_arm_length = sqrt(pow(prev_x, 2) + pow(value, 2))
         self.left_y_level = value
-        self.lever.visible = False
+        #self.lever.visible = False
         #self.lever = helix(
         #         pos=vec(0, 0, 0),
         #         axis=self.lever_arm,
@@ -67,7 +67,7 @@ class Spring:
         prev_spring_length = self.spring.length
         self.spring.length = SPRING_STRETCHED_START_LENGTH + value
         self.spring.coils = self.spring.length / self.radius
-        self.lever.visible = False
+        #self.lever.visible = False
         #self.lever = helix(
         #         pos=vec(0, 0, 0),
         #         axis=self.lever_arm,

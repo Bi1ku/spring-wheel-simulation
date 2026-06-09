@@ -56,9 +56,12 @@ class Wheel:
         y_one = 0
         y_two = 0
         if self.extrusion_mode:
-            for i in range(len(self.points) - 2):
+            for i in range(len(self.points) - 1):
                 first_point = self.points[i]
-                second_point = self.points[i + 1]
+                if i == (len(self.points) - 1):
+                    second_point = self.points[0]
+                else:
+                    second_point = self.points[i + 1]
         
                 if first_point[0] > x and second_point[0] < x:
                     slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
@@ -82,18 +85,24 @@ class Wheel:
         x_one = 0
         x_two = 0
         if self.extrusion_mode:
-            for i in range(len(self.points) - 2):
+            for i in range(len(self.points) - 1):
                 first_point = self.points[i]
-                second_point = self.points[i + 1]
+                if i == (len(self.points) - 1):
+                    second_point = self.points[0]
+                else:
+                    second_point = self.points[i + 1]
+
         
                 if first_point[1] > y and second_point[1] < y:
                     slope = (first_point[0] - second_point[0]) / (first_point[1] - second_point[1])
                     delta_x = slope * (y  - first_point[1])
                     x_one = first_point[0] + delta_x
+                    #print("found first point")
                 elif first_point[1] < y and second_point[1] > y:
                     slope = (first_point[0] - second_point[0]) / (first_point[1] - second_point[1])
                     delta_x = slope * (y - second_point[1])
                     x_two = second_point[0] + delta_x
+                    #print("found second point")
         else:
             # x^2 + y^2 = r^2 
             # x^2 = r^2 - y^2 

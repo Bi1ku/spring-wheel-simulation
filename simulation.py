@@ -409,7 +409,7 @@ class Simulation:
                 extremas = self.wheel.get_horizontal_line_extremas(self.spring_arr[i].left_y_level)
                 min_val = extremas[1]
                 max_val = extremas[0]
-                print(min_val)
+                #print(min_val)
                 #print(SPRING_LEFT_X + self.spring_arr[i].spring.length)
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=SPRING_LEFT_X + self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
                 self.spr_wheel_dist_x_texts.append(wtext(text=str(SPRING_LEFT_X + self.spring_arr[i].spring.length) + " m\n"))
