@@ -73,6 +73,7 @@ class Simulation:
                 self.wheel.time += 0.05
                 time_step += 1
         else:
+            #print("non-small angle")
             angular_vel = 0;
             angular_pos = 0; 
             time_step = 0
@@ -82,6 +83,7 @@ class Simulation:
                     sleep(0.5)
                
                 angular_accel = self.wheel.calculate_angular_accel() 
+                #print(angular_accel)
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
