@@ -7,7 +7,7 @@ class Wheel:
         self.points = points
         self.extrusion = extrusion
         self.extrusion_mode = (extrusion is not None)
-        print(self.extrusion_mode)
+        #print(self.extrusion_mode)
         self.moved_com = False
         self.springs = springs
         self.mass = mass
