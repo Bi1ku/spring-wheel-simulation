@@ -174,10 +174,10 @@ class Wheel:
             
             self.momentOfInertia = (self.mass / area) * J_com
             
-            print("custom object moment: " + str(self.momentOfInertia))
+            #print("custom object moment: " + str(self.momentOfInertia))
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
-            print("wheel object moment: " + str(self.momentOfInertia))
+            #print("wheel object moment: " + str(self.momentOfInertia))
             
 
     def change_config(self, evt, theta=0):
@@ -240,7 +240,8 @@ class Wheel:
             tg = cross(com_lever_arm, fg)
             #print(tg.z)
             total_torque += tg.z
-        print(self.momentOfInertia)
+        print("torque: " + str(total_torque))
+        print("moment of inertia: " + str(self.momentOfInertia))
         return total_torque / self.momentOfInertia
 
     # def update(self):

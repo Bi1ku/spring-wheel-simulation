@@ -83,7 +83,7 @@ class Simulation:
                     sleep(0.5)
                
                 angular_accel = self.wheel.calculate_angular_accel() 
-                #print(angular_accel)
+                print("angular accel: " + str(angular_accel))
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
@@ -251,6 +251,8 @@ class Simulation:
                 self.draw = False
                 self.small_angle = False
                 self.small_angle_disabled = True
+                for spring in self.spring_arr:
+                    spring.small_angle = False
                 sphere(pos = vec(500,-450, 0), radius = 10, color = color.black)
                 text(pos = vec(520, -460, 0), text = " - Center of Mass", height = 30, color = color.black)
 
