@@ -128,13 +128,9 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             for spring in self.spring_arr:
-                if not self.custom_object:
-                        if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
-                            spring.change_vertical_spr_wheel_dist(-self.wheel.wheel.radius)
-                        elif spring.spring.pos.y > self.wheel.wheel.radius:
-                            spring.change_vertical_spr_wheel_dist(self.wheel.wheel.radius)
-                else:
-                    extremas = self.wheel.get_vertical_line_extremas(abs(SPRING_LEFT_X) + spring.length)
+                    #print(SPRING_LEFT_X + spring.spring.length)
+                    extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X+ spring.spring.length)
+                    
                     max_val = extremas[0]
                     min_val = extremas[1]
                     if max_val == 0 and min_val == 0:
@@ -143,7 +139,7 @@ class Simulation:
                     if spring.spring.pos.y > max_val:
                         spring.change_vertical_spr_wheel_dist(max_val)
                     elif spring.spring.pos.y < min_val:
-                        spring.change_vertical_spr_wheel_dist(max_val)
+                        spring.change_vertical_spr_wheel_dist(min_val)
             sleep(0.5)
 
     def menu(self):
@@ -394,12 +390,9 @@ class Simulation:
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance Y:")
-                min_val = -self.wheel.wheel.radius
-                max_val = self.wheel.wheel.radius
-                if self.custom_object:
-                    extremas = self.wheel.get_vertical_line_extremas(0)
-                    min_val = extremas[1]
-                    max_val = extremas[0]
+                extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X + self.spring_arr[i].spring.length)
+                min_val = extremas[1]
+                max_val = extremas[0]
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_y,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_y_{i + 1}"))
                 self.spr_wheel_dist_texts.append(wtext(text=str(self.spring_arr[i].spring.pos.y) + " m\n"))
 

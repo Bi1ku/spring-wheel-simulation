@@ -6,7 +6,8 @@ class Wheel:
     def __init__(self, radius, mass, springs, extrusion=None, points=[]):
         self.points = points
         self.extrusion = extrusion
-        self.extrusion_mode = (extrusion != None)
+        self.extrusion_mode = (extrusion is not None)
+        print(self.extrusion_mode)
         self.moved_com = False
         self.springs = springs
         self.mass = mass
@@ -54,18 +55,27 @@ class Wheel:
     def get_vertical_line_extremas(self, x):
         point_one = 0
         point_two = 0
-        for i in range(len(self.points) - 2):
-            first_point = self.points[i]
-            second_point = self.points[i + 1]
-    
-            if first_point[0] > x and second_point[0] < x:
-                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (x  - first_point[0])
-                point_one = first_point[1] + delta_y
-            elif first_point[0] < x and second_point[0] > x:
-                slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (x - second_point[0])
-                point_two = second_point[1] + delta_y
+        if self.extrusion_mode:
+            for i in range(len(self.points) - 2):
+                first_point = self.points[i]
+                second_point = self.points[i + 1]
+        
+                if first_point[0] > x and second_point[0] < x:
+                    slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                    delta_y = slope * (x  - first_point[0])
+                    point_one = first_point[1] + delta_y
+                elif first_point[0] < x and second_point[0] > x:
+                    slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
+                    delta_y = slope * (x - second_point[0])
+                    point_two = second_point[1] + delta_y
+        else:
+            # x^2 + y^2 = r^2 
+            # y^2 = r^2 - x^2 
+            y2 = pow(self.wheel.radius, 2) - pow(x, 2)
+            if y2 > 0:
+                y = sqrt(y2)
+                point_one = y
+                point_two = -y
         return [max(point_one, point_two), min(point_one, point_two)]
 
     def calculate_area(self):
