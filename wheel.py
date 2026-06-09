@@ -51,20 +51,20 @@ class Wheel:
         self.calculate_com()
         self.moved_com = True
     
-    def get_init_axis_line_extremas(self):
+    def get_vertical_line_extremas(self, x):
         point_one = 0
         point_two = 0
         for i in range(len(self.points) - 2):
             first_point = self.points[i]
             second_point = self.points[i + 1]
     
-            if first_point[0] > 0 and second_point[0] < 0:
+            if first_point[0] > x and second_point[0] < x:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (-1 * first_point[0])
+                delta_y = slope * (x  - first_point[0])
                 point_one = first_point[1] + delta_y
-            elif first_point[0] < 0 and second_point[0] > 0:
+            elif first_point[0] < x and second_point[0] > x:
                 slope = (first_point[1] - second_point[1]) / (first_point[0] - second_point[0])
-                delta_y = slope * (-1 * second_point[0])
+                delta_y = slope * (x - second_point[0])
                 point_two = second_point[1] + delta_y
         return [max(point_one, point_two), min(point_one, point_two)]
 

@@ -3,7 +3,7 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE, SPRING_STRETCHED_START_LENGTH
+from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X
 
 
 class Simulation:
@@ -130,17 +130,20 @@ class Simulation:
             for spring in self.spring_arr:
                 if not self.custom_object:
                         if spring.spring.pos.y < -1 * self.wheel.wheel.radius:
-                            spring.change_spr_wheel_dist(-self.wheel.wheel.radius)
+                            spring.change_vertical_spr_wheel_dist(-self.wheel.wheel.radius)
                         elif spring.spring.pos.y > self.wheel.wheel.radius:
-                            spring.change_spr_wheel_dist(self.wheel.wheel.radius)
+                            spring.change_vertical_spr_wheel_dist(self.wheel.wheel.radius)
                 else:
-                    extremas = self.wheel.get_init_axis_line_extremas()
+                    extremas = self.wheel.get_vertical_line_extremas(abs(SPRING_LEFT_X) + spring.length)
                     max_val = extremas[0]
                     min_val = extremas[1]
+                    if max_val == 0 and min_val == 0:
+                        spring.change_horizontal_spr_wheel_dist(0)
+                        extremas = self.wheel.get_vertical_line_extremas(0)
                     if spring.spring.pos.y > max_val:
-                        spring.change_spr_wheel_dist(max_val)
+                        spring.change_vertical_spr_wheel_dist(max_val)
                     elif spring.spring.pos.y < min_val:
-                        spring.change_spr_wheel_dist(max_val)
+                        spring.change_vertical_spr_wheel_dist(max_val)
             sleep(0.5)
 
     def menu(self):
@@ -394,7 +397,7 @@ class Simulation:
                 min_val = -self.wheel.wheel.radius
                 max_val = self.wheel.wheel.radius
                 if self.custom_object:
-                    extremas = self.wheel.get_init_axis_line_extremas()
+                    extremas = self.wheel.get_vertical_line_extremas(0)
                     min_val = extremas[1]
                     max_val = extremas[0]
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_y,min=min_val,max=max_val,value=self.spring_arr[i].spring.pos.y,step=1,length=200,id=f"spr_wheel_dist_y_{i + 1}"))
