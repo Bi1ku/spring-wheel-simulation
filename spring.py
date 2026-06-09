@@ -106,11 +106,12 @@ class Spring:
         #         coils=self.length / self.radius,
         #)
  
-
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
+            #print("current length less than natural length")
             return cross((self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm)
         elif self.spring.length > self.length:
+            #print("current length more than natural length")
             return cross(-1 * ((self.spr_const * self.lever_arm_length) * self.axis),self.lever_arm)
         else:
             return vec(0, 0, 0)
