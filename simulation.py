@@ -243,8 +243,9 @@ class Simulation:
             def bind_draw(_):
                 self.draw = True
 
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
-            SCENE.append_to_caption("   ")
+            SCENE.append_to_caption("  \n")
 
         ### DRAW FINISH BUTTON ###
         def bind_draw_finish(_):
@@ -273,6 +274,7 @@ class Simulation:
                 #self.wheel.move_com_to_axis()
         
         if self.draw:
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
         if not self.custom_object:
@@ -283,6 +285,7 @@ class Simulation:
             def bind_move_com():
                 self.wheel.move_com_to_axis()
                 self.moved_com = True 
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation/Attach Object to Axis of Rotation"))
             SCENE.append_to_caption("\n\n")
 
@@ -309,6 +312,7 @@ class Simulation:
        
         if self.draw:
             self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
+            SCENE.append_to_caption("  \n")
  
         if not self.custom_object:
             SCENE.append_to_caption("\n")
@@ -343,6 +347,7 @@ class Simulation:
             self.wheel.change_config(evt=evt, theta=new_value)
 
         if self.angular_displace_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Angular Displacement: ")
             self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
             d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
@@ -353,6 +358,7 @@ class Simulation:
             self.wheel.change_config(evt=evt)  # cleanup in future
 
         if self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Wheel Mass: ")
             self.inputs.append(slider(bind=mass_bind,min=5,value=self.wheel.mass,max=30,step=0.5,length=200,id="mass"))
             mass_text = wtext(text=str(self.wheel.mass) + " kg\n")
@@ -366,6 +372,7 @@ class Simulation:
                     spring.change_config(evt=evt)
             
             if self.preset_mode:
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption("Wheel Radius: ")
                 self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
                 radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
@@ -382,6 +389,7 @@ class Simulation:
             num_springs_text.text = str(evt.value) + " springs \n"
 
         if self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Number of Springs: ")
             self.inputs.append(slider(bind=num_springs_bind,min=1,max=3,value=len(self.spring_arr),step=1,length=200))
             num_springs_text = wtext(text=str(len(self.spring_arr)) + " springs \n")
@@ -395,6 +403,7 @@ class Simulation:
 
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1} Constant: ")
                 self.inputs.append(slider(bind=spr_const_bind,min=0.5,max=5,value=self.spring_arr[i].spr_const,step=0.1,length=200,id=f"spr_const_{i + 1}"))
                 self.spr_const_texts.append(wtext(text=str(self.spring_arr[i].spr_const) + " N/m\n"))
@@ -407,6 +416,7 @@ class Simulation:
 
         if self.preset_mode: 
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1} Natural Length: ")
                 self.inputs.append(slider(bind=spr_nat_len_bind, min = 0.5 * SPRING_STRETCHED_START_LENGTH, max = 1.5 * SPRING_STRETCHED_START_LENGTH, value = self.spring_arr[i].length, step = 0.1, length = 200, id = f"spr_nat_len_{i+1}"))
                 self.spr_nat_len_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
@@ -419,6 +429,7 @@ class Simulation:
 
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance Y:")
                 extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X + self.spring_arr[i].spring.length)
                 min_val = extremas[1]
@@ -435,6 +446,7 @@ class Simulation:
 
         if self.preset_mode and not self.small_angle:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance X:")
                 extremas = self.wheel.get_horizontal_line_extremas(self.spring_arr[i].left_y_level)
                 min_val = extremas[1]
