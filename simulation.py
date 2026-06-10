@@ -3,7 +3,7 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X
+from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X, GRAPH_HEIGHT, GRAPH_WIDTH
 
 
 class Simulation:
@@ -26,11 +26,11 @@ class Simulation:
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-        self.ang_pos_graph = graph(width=500, title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
+        self.ang_pos_graph = graph(width=GRAPH_WIDTH, height=GRAPH_HEIGHT,title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
         self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(width=500,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
+        self.ang_vel_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
         self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(width=500,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
+        self.ang_acc_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
         self.ang_acc_curve = gcurve(color=color.orange)
 
         self.inputs = []
@@ -146,7 +146,7 @@ class Simulation:
 
     def instructions(self):
         SCENE.append_to_caption(
-            "\n\n     <b>Spring-Wheel Oscillation Simulation</b>\n"
+            "     <b>Spring-Wheel Oscillation Simulation</b>\n"
             "     -----------------------------------------------------------------\n"
             "     Use the controls below to set up and run the simulation.\n\n"
 
@@ -168,7 +168,7 @@ class Simulation:
             "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
             "     experience and prevents any potential issues with the inputs. Also <u>allow about a second for your</u> \n"
             "     <u>inputs to register.</u>\n\n"
-            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n\n"
+            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n"
         )
 
     def menu(self):
@@ -224,11 +224,11 @@ class Simulation:
             self.ang_acc_graph.delete()
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-            self.ang_pos_graph = graph(width=500, title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
+            self.ang_pos_graph = graph(width=GRAPH_WIDTH, height=GRAPH_HEIGHT,title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
             self.ang_pos_curve = gcurve(color=color.blue)
-            self.ang_vel_graph = graph(width=500,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
+            self.ang_vel_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
             self.ang_vel_curve = gcurve(color=color.green)
-            self.ang_acc_graph = graph(width=500,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
+            self.ang_acc_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
             self.ang_acc_curve = gcurve(color=color.orange)
 
             sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
@@ -463,5 +463,3 @@ class Simulation:
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=SPRING_LEFT_X + self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
                 self.spr_wheel_dist_x_texts.append(wtext(text=str(SPRING_LEFT_X + self.spring_arr[i].spring.length) + " m\n"))
 
-
-        SCENE.append_to_caption("\n\n\n\n\n\n\n")
