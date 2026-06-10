@@ -33,7 +33,6 @@ class Spring:
         if "spr_const" in evt.id and changed_num == num:
             self.spr_const = evt.value
         if "spr_nat_len" in evt.id and changed_num == num:
-            #print("testing nat length changer " + str(evt.value))
             self.length = evt.value
         elif "spr_wheel_dist_y" in evt.id and changed_num == num:
             self.change_vertical_spr_wheel_dist(evt.value)
@@ -108,10 +107,8 @@ class Spring:
  
     def get_angular_frequency_component(self):
         if self.spring.length < self.length:
-            #print("current length less than natural length")
             return cross((self.spr_const * self.lever_arm_length) * self.axis, self.lever_arm)
         elif self.spring.length > self.length:
-            #print("current length more than natural length")
             return cross(-1 * ((self.spr_const * self.lever_arm_length) * self.axis),self.lever_arm)
         else:
             return vec(0, 0, 0)

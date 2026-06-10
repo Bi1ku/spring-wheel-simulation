@@ -3,7 +3,7 @@ from vpython import *
 from spring import Spring
 from wheel import Wheel
 from pole import Pole
-from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X
+from constants import SCENE, SPRING_STRETCHED_START_LENGTH, SPRING_LEFT_X, GRAPH_HEIGHT, GRAPH_WIDTH
 
 
 class Simulation:
@@ -26,11 +26,11 @@ class Simulation:
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-        self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)")
+        self.ang_pos_graph = graph(width=GRAPH_WIDTH, height=GRAPH_HEIGHT,title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
         self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)")
+        self.ang_vel_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
         self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
+        self.ang_acc_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
         self.ang_acc_curve = gcurve(color=color.orange)
 
         self.inputs = []
@@ -73,7 +73,6 @@ class Simulation:
                 self.wheel.time += 0.05
                 time_step += 1
         else:
-            #print("non-small angle")
             angular_vel = 0;
             angular_pos = 0; 
             time_step = 0
@@ -83,7 +82,6 @@ class Simulation:
                     sleep(0.5)
                
                 angular_accel = self.wheel.calculate_angular_accel() 
-                print("angular accel: " + str(angular_accel))
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
@@ -128,9 +126,9 @@ class Simulation:
                 #pass
 
             SCENE.caption = ""
+            self.instructions()
             self.menu()
             for spring in self.spring_arr:
-                    #print(SPRING_LEFT_X + spring.spring.length)
                     extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X+ spring.spring.length)
                     
                     max_val = extremas[0]
@@ -146,10 +144,37 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
 
-    def menu(self):
-        SCENE.append_to_caption("\n\n")
+    def instructions(self):
+        SCENE.append_to_caption(
+            "     <b>Spring-Wheel Oscillation Simulation</b>\n"
+            "     -----------------------------------------------------------------\n"
+            "     Use the controls below to set up and run the simulation.\n\n"
 
+            "     1. Choose whether to use the small angle approximation.\n"
+            "     2. Click Set Small Angle Mode, then Set Presets.\n"
+            "     3. Adjust the wheel, spring, and mass settings with the sliders.\n"
+            "     4. Set the starting angular displacement.\n"
+            "     5. Click Run Simulation to begin.\n\n"
+
+            "     <b>Another Important Feature</b>: Draw Custom Object lets you create your own rotating shape.\n"
+            "     After pressing the button, proceed to plot points on the screen.\n\n"
+            "     <b>NOTE:</b> Points must be plotted in a <u>clockwise</u> or <u>counterclockwise</u> manner to create a\n"
+            "     closed shape. After plotting at least 3 points, click Finish Custom Object to create the shape\n"
+            "     and attach it to the wheel. You can then choose to either move the center of mass to the axis of\n"
+            "     rotation or leave it in its original position. <b>Important! If the object you drew is not attached to the \n" 
+            "     axis of rotation, you MUST press the button to move the center of mass to the axis.</b> You can also \n" 
+            "     choose to stop drawing at any time, which will clear the points you have drawn. All springs are initially at natural length.\n\n"
+
+            "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's\n"
+            "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
+            "     experience and prevents any potential issues with the inputs. Also <u>allow about a second for your</u> \n"
+            "     <u>inputs to register.</u>\n\n"
+            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n"
+        )
+
+    def menu(self):
         ### RUN SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
+        SCENE.append_to_caption("     ")
         if self.small_angle_mode:
             def bind_set_small_angle(_):
                 self.small_angle_mode = False
@@ -193,18 +218,18 @@ class Simulation:
             self.draw = False
             self.moved_com = False
             self.pole = Pole()
-            self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
+            self.spring_arr = [Spring(length=(SPRING_STRETCHED_START_LENGTH),radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
             self.ang_acc_graph.delete()
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-            self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)")
+            self.ang_pos_graph = graph(width=GRAPH_WIDTH, height=GRAPH_HEIGHT,title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
             self.ang_pos_curve = gcurve(color=color.blue)
-            self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)")
+            self.ang_vel_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
             self.ang_vel_curve = gcurve(color=color.green)
-            self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
+            self.ang_acc_graph = graph(width=GRAPH_WIDTH,height=GRAPH_HEIGHT,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
             self.ang_acc_curve = gcurve(color=color.orange)
 
             sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
@@ -227,8 +252,9 @@ class Simulation:
             def bind_draw(_):
                 self.draw = True
 
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind=bind_draw, text="Draw Custom Object")) 
-            SCENE.append_to_caption("   ")
+            SCENE.append_to_caption("  \n")
 
         ### DRAW FINISH BUTTON ###
         def bind_draw_finish(_):
@@ -259,6 +285,7 @@ class Simulation:
                 #self.wheel.move_com_to_axis()
         
         if self.draw:
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind=bind_draw_finish, text="Finish Custom Object"))
 
         if not self.custom_object:
@@ -269,6 +296,7 @@ class Simulation:
             def bind_move_com():
                 self.wheel.move_com_to_axis()
                 self.moved_com = True 
+            SCENE.append_to_caption("     ")
             self.inputs.append(button(bind= bind_move_com, text = "Move C.O.M To Axis of Rotation/Attach Object to Axis of Rotation"))
             SCENE.append_to_caption("\n\n")
 
@@ -295,9 +323,10 @@ class Simulation:
        
         if self.draw:
             self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
+            SCENE.append_to_caption("  \n")
  
         if not self.custom_object:
-            SCENE.append_to_caption("\n\n")
+            SCENE.append_to_caption("\n")
        # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -305,6 +334,7 @@ class Simulation:
                 spring.change_config(evt=evt)
         
         if self.small_angle_mode or self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Small Angle Approximation?: ")
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
             self.small_angle_checkbox.disabled = self.small_angle_disabled
@@ -328,9 +358,11 @@ class Simulation:
             self.wheel.change_config(evt=evt, theta=new_value)
 
         if self.angular_displace_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Angular Displacement: ")
             self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
             d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
+            SCENE.append_to_caption("\n\n\n\n")
 
         ### MASS SLIDER ###
         def mass_bind(evt):
@@ -338,6 +370,7 @@ class Simulation:
             self.wheel.change_config(evt=evt)  # cleanup in future
 
         if self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Wheel Mass: ")
             self.inputs.append(slider(bind=mass_bind,min=5,value=self.wheel.mass,max=30,step=0.5,length=200,id="mass"))
             mass_text = wtext(text=str(self.wheel.mass) + " kg\n")
@@ -351,6 +384,7 @@ class Simulation:
                     spring.change_config(evt=evt)
             
             if self.preset_mode:
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption("Wheel Radius: ")
                 self.inputs.append(slider(bind=radius_bind,min=50,value=self.wheel.wheel.radius,max=300,step=1,length=200,id="radius"))
                 radius_text = wtext(text=str(self.wheel.wheel.radius) + " m\n")
@@ -367,6 +401,7 @@ class Simulation:
             num_springs_text.text = str(evt.value) + " springs \n"
 
         if self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Number of Springs: ")
             self.inputs.append(slider(bind=num_springs_bind,min=1,max=3,value=len(self.spring_arr),step=1,length=200))
             num_springs_text = wtext(text=str(len(self.spring_arr)) + " springs \n")
@@ -380,6 +415,7 @@ class Simulation:
 
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1} Constant: ")
                 self.inputs.append(slider(bind=spr_const_bind,min=0.5,max=5,value=self.spring_arr[i].spr_const,step=0.1,length=200,id=f"spr_const_{i + 1}"))
                 self.spr_const_texts.append(wtext(text=str(self.spring_arr[i].spr_const) + " N/m\n"))
@@ -390,8 +426,9 @@ class Simulation:
             for i in range(len(self.spring_arr)):
                 self.spring_arr[i].change_config(evt=evt, num = i + 1)
 
-        if self.preset_mode: 
+        if self.preset_mode and not self.small_angle: 
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1} Natural Length: ")
                 self.inputs.append(slider(bind=spr_nat_len_bind, min = 0.5 * SPRING_STRETCHED_START_LENGTH, max = 1.5 * SPRING_STRETCHED_START_LENGTH, value = self.spring_arr[i].length, step = 0.1, length = 200, id = f"spr_nat_len_{i+1}"))
                 self.spr_nat_len_texts.append(wtext(text=str(self.spring_arr[i].length) + " m\n"))
@@ -404,6 +441,7 @@ class Simulation:
 
         if self.preset_mode:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance Y:")
                 extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X + self.spring_arr[i].spring.length)
                 min_val = extremas[1]
@@ -420,14 +458,11 @@ class Simulation:
 
         if self.preset_mode and not self.small_angle:
             for i in range(len(self.spring_arr)):
+                SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1}-Wheel Distance X:")
                 extremas = self.wheel.get_horizontal_line_extremas(self.spring_arr[i].left_y_level)
                 min_val = extremas[1]
                 max_val = extremas[0]
-                #print(min_val)
-                #print(SPRING_LEFT_X + self.spring_arr[i].spring.length)
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=SPRING_LEFT_X + self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
                 self.spr_wheel_dist_x_texts.append(wtext(text=str(SPRING_LEFT_X + self.spring_arr[i].spring.length) + " m\n"))
 
-
-        SCENE.append_to_caption("\n\n\n\n\n\n\n")
