@@ -150,9 +150,9 @@ class Simulation:
             "     -----------------------------------------------------------------\n"
             "     Use the controls below to set up and run the simulation.\n\n"
 
-            "     1. Choose whether to use the small angle approximation.\n"
-            "     2. Click Set Small Angle Mode, then Set Presets.\n"
-            "     3. Adjust the wheel, spring, and mass settings with the sliders.\n"
+            "     1. Choose whether to use the small angle approximation. (Some features are <b>not</b> available in small angle mode)\n"
+            "     2. Click Set Small Angle Mode button.\n"
+            "     3. Adjust the wheel, spring, and mass settings with the sliders. Then, press the Set Presets button.\n"
             "     4. Set the starting angular displacement.\n"
             "     5. Click Run Simulation to begin.\n\n"
 
