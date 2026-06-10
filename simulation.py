@@ -73,7 +73,6 @@ class Simulation:
                 self.wheel.time += 0.05
                 time_step += 1
         else:
-            #print("non-small angle")
             angular_vel = 0;
             angular_pos = 0; 
             time_step = 0
@@ -83,7 +82,6 @@ class Simulation:
                     sleep(0.5)
                
                 angular_accel = self.wheel.calculate_angular_accel() 
-                #print(angular_accel)
                 angular_vel += angular_accel * delta_time_step
                 angular_disp = angular_vel * delta_time_step
                 angular_pos += angular_disp
@@ -130,7 +128,6 @@ class Simulation:
             SCENE.caption = ""
             self.menu()
             for spring in self.spring_arr:
-                    #print(SPRING_LEFT_X + spring.spring.length)
                     extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X+ spring.spring.length)
                     
                     max_val = extremas[0]
@@ -422,8 +419,6 @@ class Simulation:
                 extremas = self.wheel.get_horizontal_line_extremas(self.spring_arr[i].left_y_level)
                 min_val = extremas[1]
                 max_val = extremas[0]
-                #print(min_val)
-                #print(SPRING_LEFT_X + self.spring_arr[i].spring.length)
                 self.inputs.append(slider(bind=spr_wheel_dist_bind_x, min=min_val, max=max_val, value=SPRING_LEFT_X + self.spring_arr[i].spring.length, id=f"spr_wheel_dist_x_{i + 1}", step=1, length=200))
                 self.spr_wheel_dist_x_texts.append(wtext(text=str(SPRING_LEFT_X + self.spring_arr[i].spring.length) + " m\n"))
 
