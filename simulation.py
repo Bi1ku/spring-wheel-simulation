@@ -146,7 +146,7 @@ class Simulation:
 
     def instructions(self):
         SCENE.append_to_caption(
-            "     <b>Spring-Wheel Oscillation Simulation</b>\n"
+            "\n\n     <b>Spring-Wheel Oscillation Simulation</b>\n"
             "     -----------------------------------------------------------------\n"
             "     Use the controls below to set up and run the simulation.\n\n"
 
@@ -156,15 +156,19 @@ class Simulation:
             "     4. Set the starting angular displacement.\n"
             "     5. Click Run Simulation to begin.\n\n"
 
-            "     <b>Additional Feature</b>: Draw Custom Object lets you create your own rotating shape. After pressing the button, proceed to plot points on the screen.\n\n"
-            "     <b>NOTE:</b> Points must be plotted in a clockwise or counterclockwise manner to create a closed shape. After plotting at least 3 points,\n"
-            "     click Finish Custom Object to create the shape and attach it to the wheel. You can then choose to either move the center of mass to the\n"
-            "     axis of rotation or leave it in its original position. You can also choose to stop drawing at any time, which will clear the points you have drawn. \n\n"
+            "     <b>Another Important Feature</b>: Draw Custom Object lets you create your own rotating shape.\n"
+            "     After pressing the button, proceed to plot points on the screen.\n\n"
+            "     <b>NOTE:</b> Points must be plotted in a <u>clockwise</u> or <u>counterclockwise</u> manner to create a\n"
+            "     closed shape. After plotting at least 3 points, click Finish Custom Object to create the shape\n"
+            "     and attach it to the wheel. You can then choose to either move the center of mass to the axis of\n"
+            "     rotation or leave it in its original position. You can also choose to stop drawing at any time, which\n"
+            "     will clear the points you have drawn. \n\n"
 
-            "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's constantly updating every 0.25 seconds in a loop.\n"
-            "     Instead, please click! This ensures a good user experience and prevents any potential issues with the inputs. Also allow about a second for your inputs \n"
-            "     to register.\n\n"
-            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n"
+            "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's\n"
+            "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
+            "     experience and prevents any potential issues with the inputs. Also <u>allow about a second for your</u> \n"
+            "     <u>inputs to register.</u>\n\n"
+            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n\n"
         )
 
     def menu(self):
@@ -355,7 +359,7 @@ class Simulation:
             SCENE.append_to_caption("Angular Displacement: ")
             self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
             d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
-            SCENE.append_to_caption("\n\n\n\n\n")
+            SCENE.append_to_caption("\n\n\n\n")
 
         ### MASS SLIDER ###
         def mass_bind(evt):
