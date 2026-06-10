@@ -355,7 +355,7 @@ class Simulation:
             SCENE.append_to_caption("Angular Displacement: ")
             self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
             d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
-            SCENE.append_to_caption("\n\n\n\n")
+            SCENE.append_to_caption("\n\n\n\n\n")
 
         ### MASS SLIDER ###
         def mass_bind(evt):
