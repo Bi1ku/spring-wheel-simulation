@@ -161,8 +161,9 @@ class Simulation:
             "     <b>NOTE:</b> Points must be plotted in a <u>clockwise</u> or <u>counterclockwise</u> manner to create a\n"
             "     closed shape. After plotting at least 3 points, click Finish Custom Object to create the shape\n"
             "     and attach it to the wheel. You can then choose to either move the center of mass to the axis of\n"
-            "     rotation or leave it in its original position. You can also choose to stop drawing at any time, which\n"
-            "     will clear the points you have drawn. \n\n"
+            "     rotation or leave it in its original position. <b>Important! If the object you drew is not attached to the \n" 
+            "     axis of rotation, you MUST press the button to move the center of mass to the axis.</b> You can also \n" 
+            "     choose to stop drawing at any time, which will clear the points you have drawn. All springs are initially at natural length.\n\n"
 
             "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's\n"
             "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
@@ -217,7 +218,7 @@ class Simulation:
             self.draw = False
             self.moved_com = False
             self.pole = Pole()
-            self.spring_arr = [Spring(length=3 * (SPRING_STRETCHED_START_LENGTH) / 4,radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
+            self.spring_arr = [Spring(length=(SPRING_STRETCHED_START_LENGTH),radius=30,spr_wheel_dist=120,spr_const=2)]  # use single spring for now
 
             self.ang_pos_graph.delete()
             self.ang_vel_graph.delete()
@@ -276,6 +277,8 @@ class Simulation:
                 self.draw = False
                 self.small_angle = False
                 self.small_angle_disabled = True
+                for spring in self.spring_arr:
+                    spring.small_angle = False
                 sphere(pos = vec(500,-450, 0), radius = 10, color = color.black)
                 text(pos = vec(520, -460, 0), text = " - Center of Mass", height = 30, color = color.black)
 
@@ -423,7 +426,7 @@ class Simulation:
             for i in range(len(self.spring_arr)):
                 self.spring_arr[i].change_config(evt=evt, num = i + 1)
 
-        if self.preset_mode: 
+        if self.preset_mode and not self.small_angle: 
             for i in range(len(self.spring_arr)):
                 SCENE.append_to_caption("     ")
                 SCENE.append_to_caption(f"Spring {i + 1} Natural Length: ")
