@@ -26,11 +26,11 @@ class Simulation:
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-        self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)")
+        self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="right")
         self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)")
+        self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
         self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
+        self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="right")
         self.ang_acc_curve = gcurve(color=color.orange)
 
         self.inputs = []
@@ -126,6 +126,7 @@ class Simulation:
                 #pass
 
             SCENE.caption = ""
+            self.instructions()
             self.menu()
             for spring in self.spring_arr:
                     extremas = self.wheel.get_vertical_line_extremas(SPRING_LEFT_X+ spring.spring.length)
@@ -143,10 +144,28 @@ class Simulation:
 
         self.angular_frequency = self.wheel.calculate_angular_frequency()
 
-    def menu(self):
-        SCENE.append_to_caption("\n\n")
+    def instructions(self):
+        SCENE.append_to_caption(
+            "     <b>Spring-Wheel Oscillation Simulation</b>\n"
+            "     -----------------------------------------------------------------\n"
+            "     Use the controls below to set up and run the simulation.\n\n"
 
+            "     1. Choose whether to use the small angle approximation.\n"
+            "     2. Click Set Small Angle Mode, then Set Presets.\n"
+            "     3. Adjust the wheel, spring, and mass settings with the sliders.\n"
+            "     4. Set the starting angular displacement.\n"
+            "     5. Click Run Simulation to begin.\n\n"
+
+            "     <b>Additional Feature</b>: Draw Custom Object lets you create your own rotating shape. After pressing the button, proceed to plot points on the screen.\n\n"
+            "     <b>NOTE:</b> Points must be plotted in a clockwise or counterclockwise manner to create a closed shape. After plotting at least 3 points,\n"
+            "     click Finish Custom Object to create the shape and attach it to the wheel. You can then choose to either move the center of mass to the\n"
+            "     axis or rotation or leave it in its original position. You can also choose to stop drawing at any time, which will clear the points you have drawn. \n\n"
+            "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n"
+        )
+
+    def menu(self):
         ### RUN SIM BUTTON ### IMPORTANT: MUST BE FIRST OR SECOND IN INPUTS LIST!!!!!
+        SCENE.append_to_caption("     ")
         if self.small_angle_mode:
             def bind_set_small_angle(_):
                 self.small_angle_mode = False
@@ -292,7 +311,7 @@ class Simulation:
             self.inputs.append(button(bind=bind_draw_stop, text="Stop Drawing"))
  
         if not self.custom_object:
-            SCENE.append_to_caption("\n\n")
+            SCENE.append_to_caption("\n")
        # SMALL ANGLE APPROX CHECKBOX
         def angle_aprox_bind(evt):
             self.small_angle = evt.checked
@@ -300,6 +319,7 @@ class Simulation:
                 spring.change_config(evt=evt)
         
         if self.small_angle_mode or self.preset_mode:
+            SCENE.append_to_caption("     ")
             SCENE.append_to_caption("Small Angle Approximation?: ")
             self.small_angle_checkbox = checkbox(bind=angle_aprox_bind, checked=self.small_angle, id="small_angle")
             self.small_angle_checkbox.disabled = self.small_angle_disabled
