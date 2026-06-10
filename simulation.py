@@ -26,11 +26,11 @@ class Simulation:
         self.num_springs = 1
         self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-        self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="right")
+        self.ang_pos_graph = graph(width=500, title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
         self.ang_pos_curve = gcurve(color=color.blue)
-        self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
+        self.ang_vel_graph = graph(width=500,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
         self.ang_vel_curve = gcurve(color=color.green)
-        self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="right")
+        self.ang_acc_graph = graph(width=500,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
         self.ang_acc_curve = gcurve(color=color.orange)
 
         self.inputs = []
@@ -159,7 +159,11 @@ class Simulation:
             "     <b>Additional Feature</b>: Draw Custom Object lets you create your own rotating shape. After pressing the button, proceed to plot points on the screen.\n\n"
             "     <b>NOTE:</b> Points must be plotted in a clockwise or counterclockwise manner to create a closed shape. After plotting at least 3 points,\n"
             "     click Finish Custom Object to create the shape and attach it to the wheel. You can then choose to either move the center of mass to the\n"
-            "     axis or rotation or leave it in its original position. You can also choose to stop drawing at any time, which will clear the points you have drawn. \n\n"
+            "     axis of rotation or leave it in its original position. You can also choose to stop drawing at any time, which will clear the points you have drawn. \n\n"
+
+            "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's constantly updating every 0.25 seconds in a loop.\n"
+            "     Instead, please click! This ensures a good user experience and prevents any potential issues with the inputs. Also allow about a second for your inputs \n"
+            "     to register.\n\n"
             "     Use Pause/Unpause to stop or continue the motion, and Reset Simulation to start over.\n\n\n"
         )
 
@@ -216,11 +220,11 @@ class Simulation:
             self.ang_acc_graph.delete()
             self.wheel = Wheel(radius=200, mass=15, springs=self.spring_arr)
 
-            self.ang_pos_graph = graph(title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)")
+            self.ang_pos_graph = graph(width=500, title="Angular Position vs Time",xtitle="Time (s)",ytitle="Angular Position (rad)", align="left")
             self.ang_pos_curve = gcurve(color=color.blue)
-            self.ang_vel_graph = graph(title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)")
+            self.ang_vel_graph = graph(width=500,title="Angular Velocity vs Time",xtitle="Time (s)",ytitle="Angular Velocity (rad/s)", align="left")
             self.ang_vel_curve = gcurve(color=color.green)
-            self.ang_acc_graph = graph(title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)")
+            self.ang_acc_graph = graph(width=500,title="Angular Acceleration vs Time",xtitle="Time (s)",ytitle="Angular Acceleration (rad/s^2)", align="left")
             self.ang_acc_curve = gcurve(color=color.orange)
 
             sphere(pos = vec(0,0,0), radius = 15, color = color.white * 0.5)
@@ -351,6 +355,7 @@ class Simulation:
             SCENE.append_to_caption("Angular Displacement: ")
             self.inputs.append(slider(bind=d_theta_bind,min=radians(-30) if self.small_angle else radians(-180),value=self.previous_theta,max=radians(30) if self.small_angle else radians(180),step=radians(5),length=200,id="d_theta"))
             d_theta_text = wtext(text=str(self.previous_theta) + " rad\n")
+            SCENE.append_to_caption("\n\n\n\n")
 
         ### MASS SLIDER ###
         def mass_bind(evt):
