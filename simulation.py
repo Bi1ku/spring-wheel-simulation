@@ -150,9 +150,9 @@ class Simulation:
             "     -----------------------------------------------------------------\n"
             "     Use the controls below to set up and run the simulation.\n\n"
 
-            "     1. Choose whether to use the small angle approximation.\n"
-            "     2. Click Set Small Angle Mode, then Set Presets.\n"
-            "     3. Adjust the wheel, spring, and mass settings with the sliders.\n"
+            "     1. Choose whether to use the small angle approximation. (Some features are <b>not</b> available in small angle mode)\n"
+            "     2. Click Set Small Angle Mode button.\n"
+            "     3. Adjust the wheel, spring, and mass settings with the sliders. Then, press the Set Presets button.\n"
             "     4. Set the starting angular displacement.\n"
             "     5. Click Run Simulation to begin.\n\n"
 
@@ -162,8 +162,8 @@ class Simulation:
             "     closed shape. After plotting at least 3 points, click Finish Custom Object to create the shape\n"
             "     and attach it to the wheel. You can then choose to either move the center of mass to the axis of\n"
             "     rotation or leave it in its original position. <b>Important! If the object you drew is not attached to the \n" 
-            "     axis of rotation, you MUST press the button to move the center of mass to the axis.</b> You can also \n" 
-            "     choose to stop drawing at any time, which will clear the points you have drawn. All springs are initially at natural length.\n\n"
+            "     axis of rotation, you MUST press the button to move the center of mass to the axis.</b> All springs are \n" 
+            "     initially at natural length.\n\n"
 
             "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's\n"
             "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
