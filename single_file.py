@@ -1,4 +1,3 @@
-#Web VPython 3.2
 from vpython import *
 
 SCENE = canvas(width=800/1.3, height=600/1.3, align="left")
@@ -529,7 +528,6 @@ class Simulation:
             "     rotation or leave it in its original position. <b>Important! If the object you drew is not attached to the \n" 
             "     axis of rotation, you MUST press the button to move the center of mass to the axis.</b> All springs are \n" 
             "     initially at natural length.\n\n"
-
             "     <b>NOTE:</b> Please refrain from holding down your mouse while using the input menu since it's\n"
             "     <u>constantly updating every 0.5 seconds</u> in a loop. Instead, please click! This ensures a good user \n"
             "     experience and prevents any potential issues with the inputs. Also <u>allow about a second for your</u> \n"
