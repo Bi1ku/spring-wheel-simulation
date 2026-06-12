@@ -183,6 +183,7 @@ class Wheel:
         self.extrusion = extrude
         self.points = translated_points
         self.calculate_com()
+        self.calculateMomentOfInertia()
         self.moved_com = True
     
     def get_vertical_line_extremas(self, x):
@@ -297,11 +298,14 @@ class Wheel:
             area = self.calculate_area()[0]
             com = self.calculate_com()
 
-            dist_to_com = dist((0, 0), (com.x, com.y))
+            dist_to_com = dist((0, 0), (com.x, com.y)) # from origin
             J_com = J - area * dist_to_com ** 2
             
             self.momentOfInertia = (self.mass / area) * J_com
-            
+
+            if not self.moved_com:
+                # parallel axis theorem
+                self.momentOfInertia = self.momentOfInertia + self.mass * pow(dist_to_com, 2)
         else:
             self.momentOfInertia = 0.5 * self.mass * pow(self.wheel.radius, 2)
             
@@ -369,7 +373,6 @@ class Wheel:
     # where the actual simulation goes
     # self.springPoints = points(pos=self.springLocations, color=vec(0, 1, 0))
     # pass
-
 class Simulation:
     def __init__(self):
         self.run = False
