@@ -22,6 +22,13 @@ was figuring out the logic for the aforementioned disabling of small angle appro
 
 Without the use of small angle approximations, (...)
 
+To calculate inertias for the irregular 2D shape given a list of vertices, we did some research online, focusing 
+particularly on the Shoelace Theorem and its collararies. Since we assume uniform density, we can just focus on areas
+(which can be calculated with shoelace). The center of mass of the shape is just the centroid, which is a arbitrary 
+summation multiplied by 1/6 times the area. There are also collararies to find the second moment of inertia about
+the x-axis and y-axis, which we can then manipulate to find the moment of inertia about the center of mass using
+the Parallel Axis Theorem. If you're still interested about the math, please view our code in wheel.py!
+
 ### Running the Program
 
 (...)
