@@ -14,3 +14,14 @@ after the simulation is ran. The user will also have the choice to enable (or di
 approximations in our math for the simulation! We found it really interesting to compare the graphical differences 
 between the two calculations.
 
+### New Physics
+
+Though the core of our project is primarily derived from our work in class with simple harmonic oscillators, angular
+kinematics, and springs, there are also some interesting new factors/parts we had to consider. Our main challenge
+was figuring out the logic for the aforementioned disabling of small angle approximations.
+
+Without the use of small angle approximations, (...)
+
+### Running the Program
+
+(...)
