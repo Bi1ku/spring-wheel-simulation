@@ -27,6 +27,13 @@ x = r * theta to update the position of the spring. We therefore had to make sur
 wheel traveled exactly with wheel, updating the vector for lever arm for every tick of the simulation so that the torque 
 calculation is correct. 
 
+To calculate inertias for the irregular 2D shape given a list of vertices, we did some research online, focusing 
+particularly on the Shoelace Theorem and its collararies. Since we assume uniform density, we can just focus on areas
+(which can be calculated with shoelace). The center of mass of the shape is just the centroid, which is a arbitrary 
+summation multiplied by 1/6 times the area. There are also collararies to find the second moment of inertia about
+the x-axis and y-axis, which we can then manipulate to find the moment of inertia about the center of mass using
+the Parallel Axis Theorem. If you're still interested about the math, please view our code in wheel.py!
+
 ### Running the Program 
 
 First, the user must choose whether or not they want to use small angle approximation for the simulation of the wheel. 
