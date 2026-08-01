@@ -4,7 +4,7 @@ An interactive physics simulator for exploring the rotational motion of configur
 
 ## Overview
 
-SpringForge was built as an AP Physics C final project to visualize how springs create torque on a rotating object. It supports both the small-angle approximation and a nonlinear model, making it easy to compare simplified harmonic motion with a more complete physics simulation.
+A visualization on how springs create torque on a rotating objects. It supports both the small-angle approximation and a nonlinear model, making it easy to compare simplified harmonic motion with a more complete physics simulation. Also includes the ability to create custom objects.
 
 ## Key Features
 
